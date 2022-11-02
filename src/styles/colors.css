@@ -1,0 +1,27 @@
+.App {
+    --color-sequencer: #4249ff;
+    --color-envelope-generator: #ff6c2f;
+    --color-pulser: #ffbb00;
+    --color-modulation-oscillator: #42954b;
+    --color-complex-oscillator: #ff2222;
+    --color-dual-lo-pass-gate: #000000;
+    --color-random-voltage: #ffffff;
+
+    --color-keyboard-pulse: #ff2222;
+    --color-keyboard-pressure: #8080FF;
+    --color-keyboard-pitch: #42954b;
+    --color-input: #000000;
+
+    --color-outline: #1a2c7d;
+
+    /* adapted from https://loading.io/color/feature/Spectral-10/ */
+    --color-cable-0: #9e0142;
+    --color-cable-1: #3288bd;
+    --color-cable-2: #fee08b;
+    --color-cable-3: #d53e4f;
+    --color-cable-4: #5e4fa2;
+    --color-cable-5: #f46d43;
+    --color-cable-6: #66c2a5;
+    --color-cable-7: #fdae61;
+    --color-cable-8: #abdda4;
+}

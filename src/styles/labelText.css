@@ -1,0 +1,5 @@
+.easel-text {
+    fill: var(--color-outline);
+    font-size: 14px;
+    user-select: none;
+}
