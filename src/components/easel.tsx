@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { dispatchMakeConnection } from "../store/dispatch";
+import { listMIDIDevicesAsync } from "../midi";
+import { dispatchMakeConnection, dispatchSetMIDIOutput } from "../store/dispatch";
 import { DragPoint, State } from "../store/reducer";
 import { Connection } from "../types";
 import { distance, toSVGCoordinate } from "../util";
@@ -19,15 +20,30 @@ export interface EaselProps {
     dragPoints: DragPoint[];
     connections: Connection[];
     dispatchMakeConnection: (startPoint: ConnectionPoint, startId: number, endPoint: ConnectionPoint, endId: number) => void;
+    dispatchSetMIDIOutput: (name: string) => void;
 }
 
 const DRAG_RADIUS = 25;
 
+async function initAsync(dispatchSetMIDIOutput: (name: string) => void) {
+    const inputs = await listMIDIDevicesAsync();
+    for (const input of inputs) {
+        if (input[1].indexOf("iProgram") !== -1) {
+            dispatchSetMIDIOutput(input[0]);
+        }
+    }
+    console.log(`INPUTS: ${inputs.join(",")}`)
+}
+
 export const EaselImpl = (props: EaselProps) => {
-    const { dragPoints, connections, dispatchMakeConnection } = props;
+    const { dragPoints, connections, dispatchMakeConnection, dispatchSetMIDIOutput } = props;
 
     const [dragStart, setDragStart] = React.useState<DragPoint>();
     const [dragEnd, setDragEnd] = React.useState<DOMPoint>();
+
+    React.useEffect(() => {
+        initAsync(dispatchSetMIDIOutput);
+    }, [])
 
     let svgRef: SVGSVGElement;
 
@@ -170,7 +186,8 @@ function mapStateToProps(state: State, ownProps: any) {
 }
 
 const mapDispatchToProps = {
-    dispatchMakeConnection
+    dispatchMakeConnection,
+    dispatchSetMIDIOutput
 };
 
 export const Easel = connect(mapStateToProps, mapDispatchToProps)(EaselImpl);

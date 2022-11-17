@@ -18,7 +18,7 @@ export interface FaderProps {
     dispatchUpdateFader: (module: string, param: string, value: number) => void;
 }
 
-const MAX_VALUE = 0xfff;
+const MAX_VALUE = 0x7ff;
 const FADER_HEIGHT = 220;
 const FADER_WIDTH = 15;
 const HANDLE_WIDTH = 12;

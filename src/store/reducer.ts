@@ -1,12 +1,17 @@
 import { ConnectionPoint } from "../components/jack";
+import { sendMIDIMessage } from "../midi";
+import { createFaderMessage, createSwitchMessage } from "../midiMessages";
 import { Connection, ConnectionJack, Easel, EaselKind } from "../types";
-import { emptyPatch } from "../util";
-import { MAKE_CONNECTION, SET_DRAG_POINT, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { emptyPatch, rateLimit } from "../util";
+import { MAKE_CONNECTION, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 export interface State {
     patch: Easel;
     dragPoints: DragPoint[];
     kind: EaselKind;
+
+    midiInput?: string;
+    midiOutput?: string;
 }
 
 export interface DragPoint {
@@ -23,6 +28,8 @@ const initialState: State = {
 }
 
 export function topReducer(state = initialState, action: any): State {
+    sendMIDI(state.midiOutput, action);
+    
     switch (action.type) {
         case UPDATE_FADER:
             return {
@@ -31,7 +38,7 @@ export function topReducer(state = initialState, action: any): State {
                     ...state.patch,
                     [action.module]: {
                         ...state.patch[action.module as keyof Easel],
-                        [action.param]: Math.min(Math.max(action.value, 0), 0xfff)
+                        [action.param]: Math.min(Math.max(action.value, 0), 0x7ff)
                     }
                 }
             };
@@ -71,10 +78,33 @@ export function topReducer(state = initialState, action: any): State {
                     )
                 }
             }
+        case SET_MIDI_INPUT:
+            return {
+                ...state,
+                midiInput: action.name
+            }
+        case SET_MIDI_OUTPUT:
+            return {
+                ...state,
+                midiOutput: action.name
+            }
     }
 
     return state;
 }
+
+const sendMIDI = rateLimit((output: string | undefined, action: any) => {
+    if (!output) return;
+
+    switch (action.type) {
+        case UPDATE_FADER:
+            sendMIDIMessage(output, createFaderMessage(action.module, action.param, action.value));
+            break;
+        case UPDATE_SWITCH:
+            sendMIDIMessage(output, createSwitchMessage(action.module, action.param, action.value));
+            break;
+    }
+}, 16)
 
 
 function setDragPoint(dragPoints: DragPoint[], connectionPoint: ConnectionPoint, id: number, x: number, y: number) {

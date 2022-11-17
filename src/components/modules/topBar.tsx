@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Jack, ConnectionPoint } from "../jack";
 import { Section } from "../section";
-import { ToggleSwitch } from "../toggleSwitch";
 
 export interface TopBarProps {
 
@@ -17,10 +16,8 @@ export const TopBar = (props: TopBarProps) => {
                 color="var(--color-modulation-oscillator)"
                 connectionPoint={ConnectionPoint.ModulationCVOutput}
                 text="mod cv out" />
-
-            <Section left={10} top={40} width={850} height={70} fill="url(#stripes)" />
         </Section>
-        <Section left={970} top={0} width={305} height={120}>
+        <Section left={970} top={0} width={305} height={120}>-
             <Section left={0} top={0} width={305} height={30} label="EXTERNAL CV" />
             <Jack
                 x={55}

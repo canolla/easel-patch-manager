@@ -11,7 +11,7 @@
 
 import { ConnectionPoint } from "../components/jack";
 import { ComplexOscillator, DualLoPassGate, Easel, EnvelopeGenerator, ModulationOscillator, Pulser, Random, SwitchValue } from "../types";
-import { MAKE_CONNECTION, SET_DRAG_POINT, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { MAKE_CONNECTION, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 
 export function dispatchUpdateFader(module: "envelope", param: keyof EnvelopeGenerator, value: number): any;
@@ -61,5 +61,19 @@ export function dispatchMakeConnection(startPoint: ConnectionPoint, startId: num
         startId,
         endPoint,
         endId
+    }
+}
+
+export function dispatchSetMIDIInput(name: string) {
+    return {
+        type: SET_MIDI_INPUT,
+        name
+    }
+}
+
+export function dispatchSetMIDIOutput(name: string) {
+    return {
+        type: SET_MIDI_OUTPUT,
+        name
     }
 }

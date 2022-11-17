@@ -113,6 +113,17 @@ export function throttle(cb: () => void, interval: number) {
     }
 }
 
+export function rateLimit(cb: (...args: any) => void, interval: number) {
+    let lastTime = Date.now();
+
+    return (...args: any) => {
+        if (Date.now() - lastTime < interval) return;
+
+        lastTime = Date.now();
+        cb(...args);
+    }
+}
+
 function forEachValue(patch: Easel, cb: (value: number, bytes: number) => number) {
     const result: any = {};
     for (const module of Object.keys(patch).sort()) {

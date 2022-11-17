@@ -16,7 +16,7 @@ export interface KnobProps {
     dispatchUpdateFader: (module: string, param: string, value: number) => void;
 }
 
-const MAX_VALUE = 0xfff;
+const MAX_VALUE = 0x7ff;
 const KNOB_RADIUS = 25;
 const KNOB_THICKNESS = 18;
 

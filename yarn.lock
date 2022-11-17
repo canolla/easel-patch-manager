@@ -1926,6 +1926,11 @@
   dependencies:
     "source-map" "^0.6.1"
 
+"@types/webmidi@^2.0.6":
+  "integrity" "sha512-sfS0A5IryqmBrUpcGPipEPeFdpqmZzP6b6lZFxHKgz5n2Vhzh4yJ5P2TvoDUhDjqJyv0Y25ng0Qodgo2Vu08ug=="
+  "resolved" "https://registry.npmjs.org/@types/webmidi/-/webmidi-2.0.6.tgz"
+  "version" "2.0.6"
+
 "@types/webpack-sources@*":
   "integrity" "sha512-LXn/oYIpBeucgP1EIJbKQ2/4ZmpvRl+dlrFdX7+94SKRUV3Evy3FsfMZY318vGhkWUS5MPhtOM3w1/hCOAOXcg=="
   "resolved" "https://registry.npmjs.org/@types/webpack-sources/-/webpack-sources-2.1.0.tgz"
