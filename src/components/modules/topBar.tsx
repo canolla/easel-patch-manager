@@ -8,16 +8,16 @@ export interface TopBarProps {
 
 export const TopBar = (props: TopBarProps) => {
     return <Section left={0} top={0} width={1575} height={120}>
-        <Section left={0} top={0} width={970} height={120}>
-            <Section left={0} top={0} width={970} height={30} label="EASEL PROGRAM MANAGER" />
+        <Section left={0} top={0} width={840} height={120}>
+            <Section left={0} top={0} width={840} height={30} label="EASEL PROGRAM MANAGER" />
             <Jack
-                x={915}
+                x={785}
                 y={65}
                 color="var(--color-modulation-oscillator)"
                 connectionPoint={ConnectionPoint.ModulationCVOutput}
                 text="mod cv out" />
         </Section>
-        <Section left={970} top={0} width={305} height={120}>-
+        <Section left={840} top={0} width={305} height={120}>-
             <Section left={0} top={0} width={305} height={30} label="EXTERNAL CV" />
             <Jack
                 x={55}
@@ -38,6 +38,21 @@ export const TopBar = (props: TopBarProps) => {
                 color="var(--color-keyboard-pressure)"
                 connectionPoint={ConnectionPoint.Panel2Output}
                 text="from panel 2" />
+        </Section>
+        <Section left={1145} top={0} width={130} height={120}>-
+            <Section left={0} top={0} width={130} height={30} label="COMP OSC" />
+            {/* <path 
+                d="M 65 65 h 45 a 5 5 1 0 1 5 5 v 60 a 5 5 1 0 1 -5 5 h -40 a 5 5 1 0 0 -5 5 v 30"
+                stroke="var(--color-outline)"
+                strokeDasharray="3 3"
+                fill="none"
+            /> */}
+            <Jack
+                x={65}
+                y={65}
+                color="var(--color-input)"
+                connectionPoint={ConnectionPoint.ComplexOscWaveshapeInput}
+                text="waveshape" />
         </Section>
         <Section left={1275} top={0} width={300} height={120}>
             <Section left={0} top={0} width={300} height={30} label="PRE AMP / ENVELOPE DETECTOR" />

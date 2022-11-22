@@ -7,10 +7,11 @@ export interface CableProps {
     x1: number;
     y1: number;
     colorIndex: number;
+    onClick?: () => void;
 }
 
 export const Cable = (props: CableProps) => {
-    let { x0, y0, x1, y1, colorIndex } = props;
+    let { x0, y0, x1, y1, colorIndex, onClick } = props;
 
     if (x0 < x1) {
         let swap = x0;
@@ -32,6 +33,7 @@ export const Cable = (props: CableProps) => {
             fill="none"
             strokeWidth={12}
             strokeLinecap="round"
+            onClick={onClick}
             />
         <path
             d={pathString}
@@ -39,6 +41,7 @@ export const Cable = (props: CableProps) => {
             fill="none"
             strokeWidth={10}
             strokeLinecap="round"
+            onClick={onClick}
             />
 
     </>

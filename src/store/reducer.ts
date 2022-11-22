@@ -1,9 +1,9 @@
 import { ConnectionPoint } from "../components/jack";
 import { sendMIDIMessage } from "../midi";
-import { createFaderMessage, createSwitchMessage } from "../midiMessages";
+import { createConnectCVMessage, createDisconnectCVMessage, createFaderMessage, createSwitchMessage } from "../midiMessages";
 import { Connection, ConnectionJack, Easel, EaselKind } from "../types";
 import { emptyPatch, rateLimit } from "../util";
-import { MAKE_CONNECTION, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { CONNECT_CV, DISCONNECT_CV, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 export interface State {
     patch: Easel;
@@ -28,7 +28,7 @@ const initialState: State = {
 }
 
 export function topReducer(state = initialState, action: any): State {
-    sendMIDI(state.midiOutput, action);
+    sendMIDI(state.midiOutput, action, state);
     
     switch (action.type) {
         case UPDATE_FADER:
@@ -64,12 +64,26 @@ export function topReducer(state = initialState, action: any): State {
                     action.y
                 )
             };
-        case MAKE_CONNECTION:
+        case CONNECT_CV:
             return {
                 ...state,
                 patch: {
                     ...state.patch,
                     connections: makeConnection(
+                        state.patch.connections,
+                        action.startPoint,
+                        action.startId,
+                        action.endPoint,
+                        action.endId
+                    )
+                }
+            }
+        case DISCONNECT_CV:
+            return {
+                ...state,
+                patch: {
+                    ...state.patch,
+                    connections: breakConnection(
                         state.patch.connections,
                         action.startPoint,
                         action.startId,
@@ -93,7 +107,7 @@ export function topReducer(state = initialState, action: any): State {
     return state;
 }
 
-const sendMIDI = rateLimit((output: string | undefined, action: any) => {
+const sendMIDI = rateLimit((output: string | undefined, action: any, state: State) => {
     if (!output) return;
 
     switch (action.type) {
@@ -102,6 +116,24 @@ const sendMIDI = rateLimit((output: string | undefined, action: any) => {
             break;
         case UPDATE_SWITCH:
             sendMIDIMessage(output, createSwitchMessage(action.module, action.param, action.value));
+            break;
+        case CONNECT_CV:
+            sendMIDIMessage(output, createConnectCVMessage(action.startPoint, action.endPoint))
+            break;
+        case DISCONNECT_CV:
+            // There are duplicates of some connection points, so we only want to send the message
+            // if there is exactly one connection left (the one being disconnected)
+            let cvCount = 0;
+            for (const connection of state.patch.connections) {
+                if (connection.start.connectionPoint === action.startPoint && connection.end.connectionPoint === action.endPoint ||
+                    connection.end.connectionPoint === action.startPoint && connection.start.connectionPoint === action.endPoint) {
+                    cvCount++;
+                }
+            }
+
+            if (cvCount === 1) {
+                sendMIDIMessage(output, createDisconnectCVMessage(action.startPoint, action.endPoint));
+            }
             break;
     }
 }, 16)
@@ -174,4 +206,13 @@ function makeConnection(existing: Connection[], startPoint: ConnectionPoint, sta
     }
 
     return existing.slice().concat([{ start, end, color: nextColor }]);
+}
+
+function breakConnection(existing: Connection[], startPoint: ConnectionPoint, startId: number, endPoint: ConnectionPoint, endId: number) {
+    return existing.filter(c => {
+        if (c.start.connectionPoint === startPoint && c.start.id === startId && c.end.connectionPoint === endPoint && c.end.id === endId) return false;
+        if (c.start.connectionPoint === endPoint && c.start.id === endId && c.end.connectionPoint === startPoint && c.end.id === startId) return false;
+
+        return true;
+    })
 }

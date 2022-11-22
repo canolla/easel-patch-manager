@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { listMIDIDevicesAsync } from "../midi";
-import { dispatchMakeConnection, dispatchSetMIDIOutput } from "../store/dispatch";
+import { dispatchConnectCV, dispatchSetMIDIOutput, dispatchDisconnectCV } from "../store/dispatch";
 import { DragPoint, State } from "../store/reducer";
 import { Connection } from "../types";
 import { distance, toSVGCoordinate } from "../util";
@@ -19,7 +19,8 @@ import { TopBar } from "./modules/topBar";
 export interface EaselProps {
     dragPoints: DragPoint[];
     connections: Connection[];
-    dispatchMakeConnection: (startPoint: ConnectionPoint, startId: number, endPoint: ConnectionPoint, endId: number) => void;
+    dispatchConnectCV: (startPoint: ConnectionPoint, startId: number, endPoint: ConnectionPoint, endId: number) => void;
+    dispatchDisconnectCV: (startPoint: ConnectionPoint, startId: number, endPoint: ConnectionPoint, endId: number) => void;
     dispatchSetMIDIOutput: (name: string) => void;
 }
 
@@ -36,7 +37,7 @@ async function initAsync(dispatchSetMIDIOutput: (name: string) => void) {
 }
 
 export const EaselImpl = (props: EaselProps) => {
-    const { dragPoints, connections, dispatchMakeConnection, dispatchSetMIDIOutput } = props;
+    const { dragPoints, connections, dispatchConnectCV, dispatchDisconnectCV, dispatchSetMIDIOutput } = props;
 
     const [dragStart, setDragStart] = React.useState<DragPoint>();
     const [dragEnd, setDragEnd] = React.useState<DOMPoint>();
@@ -77,12 +78,20 @@ export const EaselImpl = (props: EaselProps) => {
             const dragPoint = getDragPoint(point);
 
             if (dragPoint) {
-                dispatchMakeConnection(
-                    dragStart!.connectionPoint,
-                    dragStart!.id,
-                    dragPoint.connectionPoint,
-                    dragPoint.id
-                )
+                const startName = ConnectionPoint[dragStart!.connectionPoint];
+                const endName = ConnectionPoint[dragPoint.connectionPoint];
+                
+                const startIsInput = startName.indexOf("Input") !== -1;
+                const endIsInput = endName.indexOf("Input") !== -1;
+
+                if (startIsInput !== endIsInput) {
+                    dispatchConnectCV(
+                        dragStart!.connectionPoint,
+                        dragStart!.id,
+                        dragPoint.connectionPoint,
+                        dragPoint.id
+                    )
+                }
             }
 
             setDragStart(undefined);
@@ -127,7 +136,13 @@ export const EaselImpl = (props: EaselProps) => {
             y0={start!.y}
             x1={end!.x}
             y1={end!.y}
-            colorIndex={c.color} />
+            colorIndex={c.color}
+            onClick={() => dispatchDisconnectCV(
+                c.start.connectionPoint,
+                c.start.id,
+                c.end.connectionPoint,
+                c.end.id
+            )} />
     })
 
     let nextColor = takenColors.length;
@@ -186,8 +201,9 @@ function mapStateToProps(state: State, ownProps: any) {
 }
 
 const mapDispatchToProps = {
-    dispatchMakeConnection,
-    dispatchSetMIDIOutput
+    dispatchConnectCV,
+    dispatchSetMIDIOutput,
+    dispatchDisconnectCV
 };
 
 export const Easel = connect(mapStateToProps, mapDispatchToProps)(EaselImpl);

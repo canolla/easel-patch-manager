@@ -1,8 +1,28 @@
+import { ConnectionPoint } from "./components/jack";
+
 const definitions = [
     {
         "name": "cv_connect",
         "length": 35,
-        "template": "f0 24 2f 63 76 5f 63 6f 6e 6e 65 63 74 00 2c 69 69 69 66 00 00 00 00 00 00 00 00 00 00 XX 00 00 00 XX f7",
+        "template": "F0 24 2F 63 76 5F 63 6F 6E 6E 65 63 74 00 2C 69 69 69 66 00 00 00 00 00 00 00 00 00 00 XX 00 00 00 XX 3F F7 80 00 00",
+        "arguments": [
+            {
+                "offset": 29,
+                "min": 0,
+                "max": 13
+            },
+            {
+                "offset": 33,
+                "min": 0,
+                "max": 8
+            }
+        ]
+    },
+    {
+        // This one is just cv_connect with a different suffix
+        "name": "cv_disconnect",
+        "length": 35,
+        "template": "f0 24 2f 63 76 5f 63 6f 6e 6e 65 63 74 00 2c 69 69 69 66 00 00 00 00 00 00 00 00 00 00 XX 00 00 00 XX 00 00 00 00 f7",
         "arguments": [
             {
                 "offset": 29,
@@ -682,14 +702,50 @@ const definitions = [
                 "max": 2
             }
         ]
+    },
+    {
+        "name": "sw_rv_trigger",
+        "length": 31,
+        "template": "f0 1c 2f 73 77 5f 72 76 5f 74 72 69 67 67 65 72 00 00 2c 69 69 00 00 00 00 00 00 00 00 XX f7",
+        "arguments": [
+            {
+                "offset": 29,
+                "min": 0,
+                "max": 2
+            }
+        ]
+    },
+    {
+        "name": "ps_clearBuffer",
+        "length": 23,
+        "template": "f0 14 2f 70 73 5f 63 6c 65 61 72 42 75 66 66 65 72 00 2c 00 00 00 f7",
+        "arguments": []
+    },
+    {
+        "name": "ps_save",
+        "length": 23,
+        "template": "f0 14 2f 70 73 5f 73 61 76 65 00 00 00 00 2c 69 00 00 00 00 00 XX f7",
+        "arguments": [
+            {
+                "offset": 21,
+                "min": 0,
+                "max": 1
+            }
+        ]
+    },
+    {
+        "name": "ps_setName",
+        "length": 35,
+        "template": "f0 20 2f 70 73 5f 73 65 74 4e 61 6d 65 00 2c 69 73 00 00 00 00 01 49",
+        "arguments": []
     }
-]; 
+];
 
 const messageNames = {
     sequencer: {
         triggerSelect: "sw_svs_trigger",
         stages: "sw_svs_stages",
-    
+
         voltage1: "fd_svs_1",
         voltage2: "fd_svs_2",
         voltage3: "fd_svs_3",
@@ -744,8 +800,34 @@ const messageNames = {
         level2CV: "fd_dlpg_cvsLevel2",
     },
     random: {
-        triggerSource: "bottom",
+        triggerSource: "sw_rv_trigger",
     }
+};
+
+const connectionIds: { [index: string]: number } = {
+    "SequentialVoltageOutput": 0,
+    "EnvelopeGeneratorOutput": 1,
+    "PulserOutput": 2,
+    "PulseOutput": 3,
+    "PressureOutput": 4,
+    "PitchOutput": 5,
+    "RandomOutput": 6,
+    "EnvelopeDetectorOutput": 10,
+    "ModulationCVOutput": 11,
+    "Panel1Output": 12,
+    "Panel2Output": 13,
+    "PulserPeriodInput": 0,
+    "ModulationOscFrequencyInput": 1,
+    "ModulationOscModulationInput": 2,
+    "ComplexOscPitchInput": 3,
+    "ComplexOscTimbreInput": 4,
+    "ComplexOscWaveshapeInput": 5,
+    "LoPassGate1Input": 6,
+    "LoPassGate2Input": 7,
+    "PanelInput": 8,
+    "EnvelopeAttackInput": 9,
+    "EnvelopeSustainInput": 10,
+    "EnvelopeDecayInput": 11,
 };
 
 function getMessageByName(name: string) {
@@ -759,9 +841,12 @@ function getMessageTemplate(module: string, key: string) {
 
 function getMessageTemplateBytes(module: string, key: string) {
     const template = getMessageTemplate(module, key)!;
+    return getMessageBytes(template.template);
+}
 
-    const bytes = template.template.split(" ");
-    const out = new Uint8Array(template.length);
+function getMessageBytes(template: string) {
+    const bytes = template.split(" ");
+    const out = new Uint8Array(bytes.length);
     for (let i = 0; i < bytes.length; i++) {
         if (bytes[i] == "XX") continue;
         out[i] = parseInt(bytes[i], 16);
@@ -791,5 +876,76 @@ export function createSwitchMessage(module: string, key: string, value: "top" | 
     }
 
     out[out.length - 2] = num;
+    return out;
+}
+
+export function createConnectCVMessage(from: number, to: number) {
+    const msg = getMessageByName("cv_connect");
+    const out = getMessageBytes(msg!.template);
+
+    let outputName = ConnectionPoint[from];
+
+    if (outputName.indexOf("Input") !== -1) {
+        let swap = from;
+        from = to;
+        to = swap;
+    }
+
+    // output
+    out[29] = connectionIds[ConnectionPoint[from]]
+    // input
+    out[33] = connectionIds[ConnectionPoint[to]]
+
+    return out;
+}
+
+export function createDisconnectCVMessage(from: number, to: number) {
+    const msg = getMessageByName("cv_disconnect");
+    const out = getMessageBytes(msg!.template);
+
+    let outputName = ConnectionPoint[from];
+
+    if (outputName.indexOf("Input") !== -1) {
+        let swap = from;
+        from = to;
+        to = swap;
+    }
+
+    // output
+    out[29] = connectionIds[ConnectionPoint[from]]
+    // input
+    out[33] = connectionIds[ConnectionPoint[to]]
+
+    return out;
+}
+
+export function createClearBufferMessage() {
+    const msg = getMessageByName("ps_clearBuffer");
+    const out = getMessageBytes(msg!.template);
+
+    return out;
+}
+
+export function createSaveMessage(saveIndex: number) {
+    const msg = getMessageByName("ps_save");
+    const out = getMessageBytes(msg!.template);
+
+    out[out.length - 2] = saveIndex;
+
+    return out;
+}
+
+export function createSetNameMessage(name: string) {
+    const msg = getMessageByName("ps_setName");
+    const prefix = getMessageBytes(msg!.template);
+
+    const out = new Uint8Array(prefix.length + name.length + 1);
+    out.set(prefix, 0);
+    for (let i = 0; i < name.length; i++) {
+        out[prefix.length + i] = name.charCodeAt(i);
+    }
+
+    out[out.length - 1] = 0xf7;
+    
     return out;
 }

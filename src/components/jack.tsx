@@ -24,7 +24,11 @@ export enum ConnectionPoint {
     ComplexOscTimbreInput,
     LoPassGate1Input,
     LoPassGate2Input,
-    PanelInput
+    PanelInput,
+    EnvelopeAttackInput,
+    EnvelopeSustainInput,
+    EnvelopeDecayInput,
+    ComplexOscWaveshapeInput
 }
 
 export interface JackProps {
@@ -33,7 +37,7 @@ export interface JackProps {
     color: string;
     connectionPoint: ConnectionPoint;
     id?: number;
-    arrow?: boolean;
+    arrow?: "long" | "medium" | "short";
     text?: string;
 
     dispatchSetDragPoint: (connectionPoint: ConnectionPoint, id: number, x: number, y: number) => void;
@@ -55,6 +59,17 @@ export const JackImpl = (props: JackProps) => {
             )
             dispatchSetDragPoint(connectionPoint, id || 0, point.x, point.y);
         }
+    }
+
+    let arrowY = 0;
+    if (arrow === "long") {
+        arrowY = -OUTER_RADIUS - 78;
+    }
+    else if (arrow === "medium") {
+        arrowY = -OUTER_RADIUS - 42;
+    }
+    else {
+        arrowY = -OUTER_RADIUS - 12;
     }
 
     return <>
@@ -86,10 +101,10 @@ export const JackImpl = (props: JackProps) => {
                         x1={0}
                         y1={-OUTER_RADIUS}
                         x2={0}
-                        y2={-OUTER_RADIUS - 78}
+                        y2={arrowY}
                         stroke="var(--color-outline)" />
                     <path
-                        d={`M 0 ${-OUTER_RADIUS - 80} l ${4} ${10} q ${-4} ${-4} ${-8} ${0} Z`}
+                        d={`M 0 ${arrowY - 2} l ${4} ${10} q ${-4} ${-4} ${-8} ${0} Z`}
                         fill="var(--color-outline)"
                     />
                 </g>
