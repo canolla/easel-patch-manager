@@ -1,4 +1,6 @@
 import { ConnectionPoint } from "./components/jack";
+import { Easel } from "./types";
+import { forEachValue } from "./util";
 
 const definitions = [
     {
@@ -830,12 +832,16 @@ const connectionIds: { [index: string]: number } = {
     "EnvelopeDecayInput": 11,
 };
 
+export function getMessageName(module: string, param: string) {
+    return (messageNames as any)[module][param];
+}
+
 function getMessageByName(name: string) {
     return definitions.find(d => d.name === name);
 }
 
 function getMessageTemplate(module: string, key: string) {
-    const name = (messageNames as any)[module][key];
+    const name = getMessageName(module, key);
     return getMessageByName(name);
 }
 
@@ -948,4 +954,38 @@ export function createSetNameMessage(name: string) {
     out[out.length - 1] = 0xf7;
     
     return out;
+}
+
+export function createPatchMessages(easel: Easel, clearBuffer: boolean, name?: string, saveIndex?: number) {
+    const queue: Uint8Array[] = [];
+
+    if (clearBuffer) {
+        queue.push(createClearBufferMessage());
+    }
+
+    forEachValue(easel, (value, bytes, module, param, rawValue) => {
+        const messageName = getMessageName(module, param);
+
+        if (messageName.startsWith("fd") || messageName.startsWith("kn")) {
+            queue.push(createFaderMessage(module, param, rawValue));
+        }
+        else {
+            queue.push(createSwitchMessage(module, param, rawValue));
+        }
+        return 0;
+    });
+
+    for (const connection of easel.connections) {
+        queue.push(createConnectCVMessage(connection.start.connectionPoint, connection.end.connectionPoint));
+    }
+
+    if (name) {
+        queue.push(createSetNameMessage(name));
+    }
+
+    if (saveIndex !== undefined) {
+        queue.push(createSaveMessage(saveIndex))
+    }
+
+    return queue;
 }

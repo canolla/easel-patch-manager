@@ -11,7 +11,7 @@
 
 import { ConnectionPoint } from "../components/jack";
 import { ComplexOscillator, DualLoPassGate, Easel, EnvelopeGenerator, ModulationOscillator, Pulser, Random, SwitchValue } from "../types";
-import { CONNECT_CV, DISCONNECT_CV, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { CONNECT_CV, DISCONNECT_CV, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_PATCH, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 
 export function dispatchUpdateFader(module: "envelope", param: keyof EnvelopeGenerator, value: number): any;
@@ -85,5 +85,13 @@ export function dispatchSetMIDIOutput(name: string) {
     return {
         type: SET_MIDI_OUTPUT,
         name
+    }
+}
+
+
+export function dispatchSetPatch(patch: Easel) {
+    return {
+        type: SET_PATCH,
+        patch
     }
 }

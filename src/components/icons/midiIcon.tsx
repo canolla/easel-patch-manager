@@ -1,0 +1,50 @@
+export const MidiIcon = () => <>
+    <circle
+        fill="var(--color-background)"
+        stroke="var(--color-outline)"
+        cx="25"
+        cy="25"
+        r="22.5"
+    />
+    <path
+        fill="var(--color-background)"
+        stroke="var(--color-outline)"
+        d="M 20 5 a 20.5 20.5 1 1 0 10 0 v 2.5 h -10 z"
+    />
+
+    <circle
+        fill="var(--color-background)"
+        stroke="var(--color-outline)"
+        cx="37.5"
+        cy="25"
+        r="2.5"
+    />
+    <circle
+        fill="var(--color-background)"
+        stroke="var(--color-outline)"
+        cx="33.83"
+        cy="33.83"
+        r="2.5"
+    />
+    <circle
+        fill="var(--color-background)"
+        stroke="var(--color-outline)"
+        cx="25"
+        cy="37.5"
+        r="2.5"
+    />
+    <circle
+        fill="var(--color-background)"
+        stroke="var(--color-outline)"
+        cx="16.16"
+        cy="33.83"
+        r="2.5"
+    />
+    <circle
+        fill="var(--color-background)"
+        stroke="var(--color-outline)"
+        cx="12.5"
+        cy="25"
+        r="2.5"
+    />
+</>

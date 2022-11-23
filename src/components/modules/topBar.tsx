@@ -1,4 +1,9 @@
 import * as React from "react";
+import { IconButton } from "../iconButton";
+import { DownloadIcon } from "../icons/downloadIcon";
+import { FolderIcon } from "../icons/folderIcon";
+import { MidiIcon } from "../icons/midiIcon";
+import { SaveIcon } from "../icons/saveIcon";
 import { Jack, ConnectionPoint } from "../jack";
 import { Section } from "../section";
 
@@ -10,6 +15,26 @@ export const TopBar = (props: TopBarProps) => {
     return <Section left={0} top={0} width={1575} height={120}>
         <Section left={0} top={0} width={840} height={120}>
             <Section left={0} top={0} width={840} height={30} label="EASEL PROGRAM MANAGER" />
+            <IconButton
+                left={15}
+                top={45}>
+                <SaveIcon />
+            </IconButton>
+            <IconButton
+                left={90}
+                top={45}>
+                <DownloadIcon />
+            </IconButton>
+            <IconButton
+                left={165}
+                top={45}>
+                <FolderIcon />
+            </IconButton>
+            <IconButton
+                left={240}
+                top={45}>
+                <MidiIcon />
+            </IconButton>
             <Jack
                 x={785}
                 y={65}

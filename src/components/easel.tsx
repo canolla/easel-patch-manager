@@ -126,9 +126,10 @@ export const EaselImpl = (props: EaselProps) => {
     }, [dragStart, dragPoints]);
 
     const takenColors: boolean[] = [];
-    const cables = connections.map((c, index) => {
+    const cables = dragPoints.length ? connections.map((c, index) => {
         const start = dragPoints.find(p => c.start.connectionPoint === p.connectionPoint && c.start.id === p.id);
         const end = dragPoints.find(p => c.end.connectionPoint === p.connectionPoint && c.end.id === p.id);
+        if (!start || !end) return undefined;
         takenColors[c.color] = true;
         return <Cable
             key={index}
@@ -143,7 +144,7 @@ export const EaselImpl = (props: EaselProps) => {
                 c.end.connectionPoint,
                 c.end.id
             )} />
-    })
+    }) : []
 
     let nextColor = takenColors.length;
     for (let i = 0; i < takenColors.length; i++) {

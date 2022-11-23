@@ -3,7 +3,7 @@ import { sendMIDIMessage } from "../midi";
 import { createConnectCVMessage, createDisconnectCVMessage, createFaderMessage, createSwitchMessage } from "../midiMessages";
 import { Connection, ConnectionJack, Easel, EaselKind } from "../types";
 import { emptyPatch, rateLimit } from "../util";
-import { CONNECT_CV, DISCONNECT_CV, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { CONNECT_CV, DISCONNECT_CV, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_PATCH, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 export interface State {
     patch: Easel;
@@ -31,6 +31,11 @@ export function topReducer(state = initialState, action: any): State {
     sendMIDI(state.midiOutput, action, state);
     
     switch (action.type) {
+        case SET_PATCH:
+            return {
+                ...state,
+                patch: action.patch
+            };
         case UPDATE_FADER:
             return {
                 ...state,

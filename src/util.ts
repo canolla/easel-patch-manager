@@ -1,4 +1,5 @@
-import { Easel } from "./types";
+import { getMessageName } from "./midiMessages";
+import { Connection, Easel } from "./types";
 
 export function encodePatch(patch: Easel) {
     let bytes = "";
@@ -7,6 +8,14 @@ export function encodePatch(patch: Easel) {
         addBytes(value, bytes);
         return 0;
     });
+
+    for (const connection of patch.connections) {
+        addBytes(connection.start.connectionPoint, 1);
+        addBytes(connection.start.id, 1);
+        addBytes(connection.end.connectionPoint, 1);
+        addBytes(connection.end.id, 1);
+        addBytes(connection.color, 1);
+    }
 
     return encodeURIComponent(btoa(bytes));
 
@@ -22,7 +31,7 @@ export function decodePatch(encoded: string) {
 
     let offset = 0;
 
-    return forEachValue(emptyPatch(), (value, numBytes) => {
+    const out = forEachValue(emptyPatch(), (value, numBytes) => {
         let current = 0;
 
         for (let i = 0; i < numBytes; i++) {
@@ -32,6 +41,32 @@ export function decodePatch(encoded: string) {
 
         return current;
     });
+
+    out.connections = [];
+
+    const readByte = () => {
+        const res = bytes.charCodeAt(offset);
+        offset++;
+        return res;
+    }
+
+    for (let i = offset; i < bytes.length; i += 5) {
+        const connection: Connection = {
+            start: {
+                connectionPoint: readByte(),
+                id: readByte()
+            },
+            end: {
+                connectionPoint: readByte(),
+                id: readByte()
+            },
+            color: readByte()
+        }
+
+        out.connections.push(connection);
+    }
+
+    return out;
 }
 
 export function emptyPatch(): Easel {
@@ -124,10 +159,13 @@ export function rateLimit(cb: (...args: any) => void, interval: number) {
     }
 }
 
-function forEachValue(patch: Easel, cb: (value: number, bytes: number) => number) {
+export function forEachValue(patch: Easel, cb: (value: number, bytes: number, module: string, param: string, originalValue: any) => number) {
     const result: any = {};
     for (const module of Object.keys(patch).sort()) {
         result[module] = {};
+
+        if (module === "connections") continue;
+
         for (const param of Object.keys((patch as any)[module]).sort()) {
             const current = (patch as any)[module][param];
 
@@ -135,10 +173,10 @@ function forEachValue(patch: Easel, cb: (value: number, bytes: number) => number
             
             if (typeof current === "string") {
                 const possible = ["top", "bottom", "middle"];
-                result[module][param] = possible[cb(possible.indexOf(current), 1)];
+                result[module][param] = possible[cb(possible.indexOf(current), 1, module, param, current)];
             }
             else {
-                result[module][param] = cb(current, 2);
+                result[module][param] = cb(current, 2, module, param, current);
             }
         }
     }
