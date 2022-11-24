@@ -1,6 +1,5 @@
 import { ConnectionPoint } from "./components/jack";
-
-export type EaselKind = "iprogram" | "208c" | "208r"
+import { ModalType } from "./store/reducer";
 
 export type SwitchValue = "top" | "middle" | "bottom";
 
@@ -94,7 +93,25 @@ export interface Connection {
     color: number;
 }
 
-// export type EaselModule = keyof Easel;
-// export type EnvelopeGeneratorParam = keyof EnvelopeGenerator;
-// export type PulserParam = keyof Pulser;
-// export type 
+export interface BaseModal {
+    type: ModalType;
+}
+
+export type ModalType = "save" | "download" | "file" | "midi";
+export type ModalState = SaveModalState | DownloadModalState | FileModalState | MidiModalState;
+
+export interface SaveModalState extends BaseModal {
+    type: "save";
+}
+
+export interface DownloadModalState extends BaseModal {
+    type: "download";
+}
+
+export interface FileModalState extends BaseModal {
+    type: "file";
+}
+
+export interface MidiModalState extends BaseModal {
+    type: "midi";
+}

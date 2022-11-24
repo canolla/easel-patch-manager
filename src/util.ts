@@ -194,3 +194,7 @@ export function toSVGCoordinate(svg: SVGSVGElement, x: number, y: number) {
 export function distance(x0: number, y0: number, x1: number, y1: number) {
     return Math.sqrt(Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2));
 }
+
+export function cleanPatchName(title: string) {
+    return title.replace(/[^a-zA-Z0-9]/g, "");
+}

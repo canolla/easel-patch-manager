@@ -1,4 +1,8 @@
 import * as React from "react";
+import { connect } from "react-redux";
+import { dispatchSetPatchName, dispatchShowModal } from "../../store/dispatch";
+import { State } from "../../store/reducer";
+import { ModalType } from "../../types";
 import { IconButton } from "../iconButton";
 import { DownloadIcon } from "../icons/downloadIcon";
 import { FolderIcon } from "../icons/folderIcon";
@@ -6,35 +10,55 @@ import { MidiIcon } from "../icons/midiIcon";
 import { SaveIcon } from "../icons/saveIcon";
 import { Jack, ConnectionPoint } from "../jack";
 import { Section } from "../section";
+import { TitleInput } from "../titleInput";
 
 export interface TopBarProps {
-
+    dispatchSetPatchName: (name: string) => void;
+    dispatchShowModal: (type: ModalType) => void;
+    patchName: string;
 }
 
-export const TopBar = (props: TopBarProps) => {
+export const TopBarImpl = (props: TopBarProps) => {
+    const { patchName, dispatchSetPatchName, dispatchShowModal } = props;
     return <Section left={0} top={0} width={1575} height={120}>
         <Section left={0} top={0} width={840} height={120}>
             <Section left={0} top={0} width={840} height={30} label="EASEL PROGRAM MANAGER" />
             <IconButton
                 left={15}
-                top={45}>
+                top={45}
+                title="Save Patch"
+                onClick={() => dispatchShowModal("save")}>
                 <SaveIcon />
             </IconButton>
             <IconButton
                 left={90}
-                top={45}>
+                top={45}
+                title="Send patch to easel"
+                onClick={() => dispatchShowModal("download")}>
                 <DownloadIcon />
             </IconButton>
             <IconButton
                 left={165}
-                top={45}>
+                top={45}
+                title="Saved Patches"
+                onClick={() => dispatchShowModal("file")}>
                 <FolderIcon />
             </IconButton>
             <IconButton
                 left={240}
-                top={45}>
+                top={45}
+                title="Midi Config"
+                onClick={() => dispatchShowModal("midi")}>
                 <MidiIcon />
             </IconButton>
+            <TitleInput
+                left={315}
+                top={45}
+                height={60}
+                width={410}
+                onChange={dispatchSetPatchName}
+                value={patchName}
+                />
             <Jack
                 x={785}
                 y={65}
@@ -91,3 +115,19 @@ export const TopBar = (props: TopBarProps) => {
         </Section>
     </Section>
 }
+
+function mapStateToProps(state: State, ownProps: any) {
+    if (!state) return {};
+
+    return {
+        ...ownProps,
+        patchName: state.name
+    }
+}
+
+const mapDispatchToProps = {
+    dispatchSetPatchName,
+    dispatchShowModal
+};
+
+export const TopBar = connect(mapStateToProps, mapDispatchToProps)(TopBarImpl);

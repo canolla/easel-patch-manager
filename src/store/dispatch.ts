@@ -10,8 +10,8 @@
 // }
 
 import { ConnectionPoint } from "../components/jack";
-import { ComplexOscillator, DualLoPassGate, Easel, EnvelopeGenerator, ModulationOscillator, Pulser, Random, SwitchValue } from "../types";
-import { CONNECT_CV, DISCONNECT_CV, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_PATCH, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { ComplexOscillator, DualLoPassGate, Easel, EnvelopeGenerator, ModulationOscillator, Pulser, Random, SwitchValue, ModalType } from "../types";
+import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_PATCH, SET_PATCH_NAME, SHOW_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 
 export function dispatchUpdateFader(module: "envelope", param: keyof EnvelopeGenerator, value: number): any;
@@ -88,10 +88,29 @@ export function dispatchSetMIDIOutput(name: string) {
     }
 }
 
-
 export function dispatchSetPatch(patch: Easel) {
     return {
         type: SET_PATCH,
         patch
+    }
+}
+
+export function dispatchSetPatchName(name: string) {
+    return {
+        type: SET_PATCH_NAME,
+        name
+    }
+}
+
+export function dispatchShowModal(modalType: ModalType) {
+    return {
+        modalType,
+        type: SHOW_MODAL
+    }
+}
+
+export function dispatchHideModal() {
+    return {
+        type: HIDE_MODAL
     }
 }

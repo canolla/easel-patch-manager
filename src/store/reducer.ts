@@ -1,17 +1,19 @@
 import { ConnectionPoint } from "../components/jack";
 import { sendMIDIMessage } from "../midi";
 import { createConnectCVMessage, createDisconnectCVMessage, createFaderMessage, createSwitchMessage } from "../midiMessages";
-import { Connection, ConnectionJack, Easel, EaselKind } from "../types";
-import { emptyPatch, rateLimit } from "../util";
-import { CONNECT_CV, DISCONNECT_CV, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_PATCH, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { Connection, ConnectionJack, Easel, ModalState, ModalType } from "../types";
+import { cleanPatchName, emptyPatch, rateLimit } from "../util";
+import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_PATCH, SET_PATCH_NAME, SHOW_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 export interface State {
     patch: Easel;
+    name: string;
     dragPoints: DragPoint[];
-    kind: EaselKind;
 
     midiInput?: string;
     midiOutput?: string;
+
+    modal?: ModalState;
 }
 
 export interface DragPoint {
@@ -23,8 +25,8 @@ export interface DragPoint {
 
 const initialState: State = {
     patch: emptyPatch(),
+    name: "Untitled",
     dragPoints: [],
-    kind: "iprogram"
 }
 
 export function topReducer(state = initialState, action: any): State {
@@ -106,6 +108,22 @@ export function topReducer(state = initialState, action: any): State {
             return {
                 ...state,
                 midiOutput: action.name
+            }
+        case SET_PATCH_NAME:
+            return {
+                ...state,
+                name: cleanPatchName(action.name)
+            }
+
+        case SHOW_MODAL:
+            return {
+                ...state,
+                modal: defaultModalState(action.modalType)
+            }
+        case HIDE_MODAL:
+            return {
+                ...state,
+                modal: undefined
             }
     }
 
@@ -220,4 +238,10 @@ function breakConnection(existing: Connection[], startPoint: ConnectionPoint, st
 
         return true;
     })
+}
+
+function defaultModalState(type: ModalType): ModalState {
+    return {
+        type
+    }
 }

@@ -1,0 +1,9 @@
+.title-input input {
+    height: calc(100% - 1rem);
+    width: calc(100% - 1rem);
+    border: none;
+    background: none;
+    font-size: 40px;
+    margin-top: 0.5rem;
+    color: var(--color-outline);
+}
