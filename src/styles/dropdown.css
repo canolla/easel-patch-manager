@@ -1,0 +1,149 @@
+.common-button {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    min-height: 1rem;
+    outline: none;
+    border: none;
+    vertical-align: middle;
+    color: var(--color-outline);
+    background: var(--color-background);
+    border: 2px solid var(--color-outline);
+    margin: 0 0.25rem 0 0;
+    padding: 0.8rem 2rem 0.95rem;
+    text-transform: none;
+    text-shadow: none;
+    font-weight: 400;
+    line-height: 1em;
+    font-style: normal;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    transition: opacity .1s ease,background-color .1s ease,box-shadow .1s ease,color .1s ease,background .1s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.common-button:hover {
+    color: var(--color-background);
+    background: var(--color-outline);
+}
+
+
+.common-dropdown {
+    position: relative;
+    width: fit-content;
+}
+
+.common-dropdown > .common-button {
+    display: block;
+    box-sizing: border-box;
+
+    color: var(--color-outline);
+    background-color: var(--color-background);
+    border: 2px solid var(--color-outline);
+
+    min-width: 10rem;
+    padding: 0px 28px 0px 8px;
+    margin: 0px;
+    height: 32px;
+    line-height: 30px;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: left;
+    height: 2.5rem;
+}
+
+.common-dropdown > .common-button:focus::after {
+    outline: none;
+}
+
+.common-dropdown > .common-button > .common-button-flex > i.right {
+    position: absolute;
+    right: 0
+}
+
+.common-dropdown > .common-button:focus {
+    border: 2px solid var(--color-sequencer);
+}
+
+.common-dropdown .common-button > .common-button-flex > i:first-child {
+    margin-right: 0.5rem;
+}
+
+.common-dropdown > .common-menu-dropdown-pane {
+    width: unset;
+    right: unset;
+    min-width: 100%;
+    left: 0;
+    z-index: 1;
+}
+
+.common-dropdown > .common-menu-dropdown-pane li .common-button {
+    text-align: left;
+    width: 100%;
+    padding-left: 0.5rem;
+}
+
+.common-dropdown.hang-left > .common-menu-dropdown-pane {
+    left: unset;
+    right: 0;
+}
+
+.common-dropdown.icon-preview > .common-button {
+    min-width: unset;
+}
+
+.common-dropdown.icon-preview > .common-button .common-button-label {
+    display: none;
+}
+
+i.chevron-down::after {
+    content: '▼';
+}
+
+i.chevron-up::after {
+    content: '▲';
+}
+
+.common-menu-dropdown {
+    height: 100%;
+    position: relative;
+}
+
+.common-menu-dropdown > .menu-button.expanded {
+    background: var(--color-outline);
+    color: var(--color-background);
+}
+
+.common-menu-dropdown-pane {
+    position: absolute;
+    right: 0;
+    width: 12rem;
+    margin-top: 0.25rem;
+}
+
+.common-menu-dropdown-pane ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: var(--color-background);
+}
+
+.common-menu-dropdown-pane li {
+    width: 100%;
+}
+
+.common-menu-dropdown-item {
+    background: none;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 1rem;
+}
+
+/* .common-menu-dropdown-item.common-button:focus::after {
+    outline: @buttonFocusOutlineLightBackground;
+} */

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { dispatchSetPatchName, dispatchShowModal } from "../../store/dispatch";
 import { State } from "../../store/reducer";
 import { ModalType } from "../../types";
+import { createPreviewURI } from "../../util";
 import { IconButton } from "../iconButton";
 import { DownloadIcon } from "../icons/downloadIcon";
 import { FolderIcon } from "../icons/folderIcon";
@@ -20,14 +21,26 @@ export interface TopBarProps {
 
 export const TopBarImpl = (props: TopBarProps) => {
     const { patchName, dispatchSetPatchName, dispatchShowModal } = props;
+
+    let svgRef: SVGSVGElement;
+    const handleRef = (ref: SVGGElement) => {
+        if (ref) svgRef = ref.ownerSVGElement!
+    }
+
+    const onSaveClicked = () => {
+        console.log(createPreviewURI(svgRef))
+    }
+
+
     return <Section left={0} top={0} width={1575} height={120}>
+        <g ref={handleRef} />
         <Section left={0} top={0} width={840} height={120}>
             <Section left={0} top={0} width={840} height={30} label="EASEL PROGRAM MANAGER" />
             <IconButton
                 left={15}
                 top={45}
                 title="Save Patch"
-                onClick={() => dispatchShowModal("save")}>
+                onClick={onSaveClicked}>
                 <SaveIcon />
             </IconButton>
             <IconButton

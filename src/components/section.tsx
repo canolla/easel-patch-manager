@@ -13,7 +13,7 @@ export interface SectionProps {
 export const Section = (props: React.PropsWithChildren<SectionProps>) => {
     const { width, height, left, top, label, fill, children } = props;
 
-    return <g transform={`translate(${left}, ${top})`}>
+    return <g className="section" transform={`translate(${left}, ${top})`}>
         <rect
             x={0} y={0}
             width={width}

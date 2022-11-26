@@ -96,7 +96,7 @@ export const JackImpl = (props: JackProps) => {
                     anchor="middle" />
             }
             {arrow &&
-                <g>
+                <g className="jack-arrow">
                     <line
                         x1={0}
                         y1={-OUTER_RADIUS}

@@ -33,9 +33,9 @@ export const ModulationOscillator = (props: ModulationOscillatorProps) => {
                 value={"top"}
                 module={"modOsc"} param={"waveshape"}
             />
-            <path stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 10 m 0 10 l 20 -10 l 0 10 l 20 -10 l 0 10 l 20 -10 l 0 10" />
-            <path stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 25 m 0 10 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10" />
-            <path stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 40 m 0 10 l 10 -10 l 10 10 l 10 -10 l 10 10 l 10 -10 l 10 10" />
+            <path className="wave-path" stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 10 m 0 10 l 20 -10 l 0 10 l 20 -10 l 0 10 l 20 -10 l 0 10" />
+            <path className="wave-path" stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 25 m 0 10 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10" />
+            <path className="wave-path" stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 40 m 0 10 l 10 -10 l 10 10 l 10 -10 l 10 10 l 10 -10 l 10 10" />
         </Section>
         <Section left={0} top={115} width={175} height={85} label="range">
             <ToggleSwitch

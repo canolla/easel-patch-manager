@@ -198,3 +198,92 @@ export function distance(x0: number, y0: number, x1: number, y1: number) {
 export function cleanPatchName(title: string) {
     return title.replace(/[^a-zA-Z0-9]/g, "");
 }
+
+export function createPreviewURI(svg: SVGSVGElement) {
+    const clone = svg.cloneNode(true) as SVGSVGElement;
+
+    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+    clone.appendChild(style);
+    style.textContent = previewCSS;
+
+    const selectorsToRemove = [
+        ".title-input",
+        ".easel-text",
+        ".icon-button",
+        ".jack-arrow",
+        ".wave-path",
+        ".easel-fader-bg.filled",
+        "foreignObject",
+        ".knob-fg-outline",
+        ".knob-bg"
+    ]
+
+    for (const selector of selectorsToRemove) {
+        const objs = clone.querySelectorAll(selector);
+    
+        for (let i = 0; i < objs.length; i++) {
+            objs.item(i).remove();
+        }
+    }
+
+    const text = new XMLSerializer().serializeToString(clone);
+    return "data:image/svg+xml;base64," + btoa(text);
+}
+
+const previewCSS = `
+* {
+    --color-sequencer: #333;
+    --color-envelope-generator: #333;
+    --color-pulser: #333;
+    --color-modulation-oscillator: #333;
+    --color-complex-oscillator: #333;
+    --color-dual-lo-pass-gate: #333;
+    --color-random-voltage: #333;
+
+    --color-keyboard-pulse: #333;
+    --color-keyboard-pressure: #333;
+    --color-keyboard-pitch: #333;
+    --color-input: #666;
+
+    --color-outline: #000;
+    --color-background: #fff;
+    --color-switch-bg: #fff;
+
+    --color-cable-0: #fff;
+    --color-cable-1: #fff;
+    --color-cable-2: #fff;
+    --color-cable-3: #fff;
+    --color-cable-4: #fff;
+    --color-cable-5: #fff;
+    --color-cable-6: #fff;
+    --color-cable-7: #fff;
+    --color-cable-8: #fff;
+
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.easel-text {
+    fill: var(--color-outline);
+    font-size: 14px;
+    user-select: none;
+}
+
+.section>rect {
+    stroke-width: 2;
+}
+
+.cable-bg {
+    stroke-width: 16;
+}
+
+.easel-toggle>circle {
+    fill: #fff;
+    stroke: none;
+}
+.easel-toggle-bg {
+    fill: #000;
+}
+.knob-fg {
+    stroke: #fff
+}
+`

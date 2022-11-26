@@ -68,7 +68,7 @@ export const FaderViewImpl = (props: FaderProps) => {
             fillOpacity="0.6"
             rx={FADER_WIDTH / 6}
             stroke="var(--color-outline)" />
-        <rect className="easel-fader-bg"
+        <rect className="easel-fader-bg filled"
             fill={color}
             height={FADER_HEIGHT - offset}
             width={FADER_WIDTH / 3}

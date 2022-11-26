@@ -31,19 +31,55 @@
 }
 
 .modal .modal-title-container {
+    position: relative;
     border-bottom: solid 2px var(--color-outline);
 
     display: flex;
     flex-direction: row;
-    height: 2rem;
+    height: 2.5rem;
+    align-items: center;
+}
+
+.modal .modal-title-container button {
+    position: absolute;
+    right: 0;
+    background-color: var(--color-background);
+    border: none;
+    border-left: solid 2px var(--color-outline);
+    color: var(--color-outline);
+    height: 100%;
+    width: 2.5rem;
+    font-size: 24px;
+
+    transition: background-color 0.15s ease, color 0.15s ease ;
+}
+
+.modal .modal-title-container button:hover {
+    background-color: var(--color-outline);
+    color: var(--color-background);
+}
+
+.modal .modal-title-container button:active {
+    opacity: 0.8;
 }
 
 .modal .modal-title-container .modal-title {
     color: var(--color-outline);
     font-size: 24px;
-    height: 100%;
     width: 100%;
     vertical-align: middle;
     text-align: center;
     user-select: none;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem 1rem;
+}
+
+.modal-field .modal-field-label {
+    color: var(--color-outline);
+    margin-right: 2rem;
 }

@@ -68,6 +68,7 @@ export const KnobImpl = (props: KnobProps) => {
 
     return <g transform={`translate(${x}, ${y})`} ref={attachEvents}>
         <path
+            className="knob-bg-outline"
             d={`M ${Math.cos(minAngle) * KNOB_RADIUS} ${Math.sin(minAngle) * KNOB_RADIUS} A ${KNOB_RADIUS} ${KNOB_RADIUS} 0 1 1 ${Math.cos(maxAngle) * KNOB_RADIUS} ${Math.sin(maxAngle) * KNOB_RADIUS}`}
             stroke="var(--color-outline)"
             fill="none"
@@ -75,13 +76,15 @@ export const KnobImpl = (props: KnobProps) => {
             strokeWidth={KNOB_THICKNESS + 2}
         />
         <path
+            className="knob-bg"
             d={`M ${Math.cos(minAngle) * KNOB_RADIUS} ${Math.sin(minAngle) * KNOB_RADIUS} A ${KNOB_RADIUS} ${KNOB_RADIUS} 0 1 1 ${Math.cos(maxAngle) * KNOB_RADIUS} ${Math.sin(maxAngle) * KNOB_RADIUS}`}
-            stroke="#dedede"
+            stroke="var(--color-switch-bg)"
             fill="none"
             strokeLinecap="round"
             strokeWidth={KNOB_THICKNESS}
         />
         <path
+            className="knob-fg-outline"
             d={`M ${Math.cos(minAngle) * KNOB_RADIUS} ${Math.sin(minAngle) * KNOB_RADIUS} A ${KNOB_RADIUS} ${KNOB_RADIUS} 0 ${innerArcFlag} 1 ${Math.cos(angle) * KNOB_RADIUS} ${Math.sin(angle) * KNOB_RADIUS}`}
             stroke="var(--color-outline)"
             fill="none"
@@ -89,6 +92,7 @@ export const KnobImpl = (props: KnobProps) => {
             strokeWidth={KNOB_THICKNESS - 2}
         />
         <path
+            className="knob-fg"
             d={`M ${Math.cos(minAngle) * KNOB_RADIUS} ${Math.sin(minAngle) * KNOB_RADIUS} A ${KNOB_RADIUS} ${KNOB_RADIUS} 0 ${innerArcFlag} 1 ${Math.cos(angle) * KNOB_RADIUS} ${Math.sin(angle) * KNOB_RADIUS}`}
             stroke={color}
             fill="none"

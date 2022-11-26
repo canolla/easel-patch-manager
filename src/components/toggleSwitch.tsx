@@ -52,9 +52,9 @@ export const ToggleSwitchImpl = (props: ToggleSwitchProps) => {
     }
 
 
-    return <g transform={`translate(${left}, ${top})`} onClick={onClick}>
+    return <g className="easel-toggle" transform={`translate(${left}, ${top})`} onClick={onClick}>
         <rect className="easel-toggle-bg"
-            fill={"#dedede"}
+            fill="var(--color-switch-bg)"
             height={TOGGLE_HEIGHT}
             width={TOGGLE_WIDTH}
             rx={TOGGLE_WIDTH / 2}

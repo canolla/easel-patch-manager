@@ -69,9 +69,9 @@ export const ComplexOscillatorViewImpl = (props: ComplexOscillatorViewProps) => 
                 value={waveshape}
                 module={"complexOsc"} param={"waveshape"}
             />
-            <path stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 95 m 0 10 l 20 -10 l 0 10 l 20 -10 l 0 10 l 20 -10 l 0 10" />
-            <path stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 110 m 0 10 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10" />
-            <path stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 125 m 0 10 l 10 -10 l 10 10 l 10 -10 l 10 10 l 10 -10 l 10 10" />
+            <path className="wave-path" stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 95 m 0 10 l 20 -10 l 0 10 l 20 -10 l 0 10 l 20 -10 l 0 10" />
+            <path className="wave-path" stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 110 m 0 10 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10 l 10 0 l 0 10 l 10 0 l 0 -10" />
+            <path className="wave-path" stroke="var(--color-outline)" strokeWidth="1" fill="none" d="m 55 125 m 0 10 l 10 -10 l 10 10 l 10 -10 l 10 10 l 10 -10 l 10 10" />
         </Section>
         <Section left={0} top={200} width={305} height={300}>
             <FaderView left={30} top={20} value={pitchCV} color="var(--color-complex-oscillator)" module={"complexOsc"} fader={"pitchCV"} />

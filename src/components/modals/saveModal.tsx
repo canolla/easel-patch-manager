@@ -12,7 +12,7 @@ export const SaveModalImpl = (props: SaveModalProps) => {
     const { dispatchHideModal } = props;
 
     return <Modal
-        title="Save Patch"
+        title="Save patch"
         onCloseClick={dispatchHideModal}>
 
 

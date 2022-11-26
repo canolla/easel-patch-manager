@@ -27,7 +27,8 @@ export const Cable = (props: CableProps) => {
     const pathString = `M ${x0} ${y0} q ${(x1 - x0) / 2} ${Math.min(Math.max(10, 200 - d / 10), 100)} ${x1 - x0} ${y1 - y0}`;
 
     return <>
-            <path
+        <path
+            className="cable-bg"
             d={pathString}
             stroke="var(--color-outline)"
             fill="none"

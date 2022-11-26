@@ -2,6 +2,7 @@ import { ConnectionPoint } from "./components/jack";
 import { ModalType } from "./store/reducer";
 
 export type SwitchValue = "top" | "middle" | "bottom";
+export type ParamKind = "fader" | "two-way" | "three-way";
 
 export interface EnvelopeGenerator {
     attack: number;

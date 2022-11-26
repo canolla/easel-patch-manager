@@ -7,11 +7,21 @@ async function getAccessAsync() {
     return midiAccessPromise;
 }
 
-export async function listMIDIDevicesAsync() {
+export async function listMIDIOutputsAsync() {
     const access = await getAccessAsync();
 
     const out: [string, string][] = [];
     for (const entry of access.outputs) {
+        out.push([entry[0], entry[1].name!]);
+    }
+    return out;
+}
+
+export async function listMIDIInputsAsync() {
+    const access = await getAccessAsync();
+
+    const out: [string, string][] = [];
+    for (const entry of access.inputs) {
         out.push([entry[0], entry[1].name!]);
     }
     return out;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { listMIDIDevicesAsync } from "../midi";
+import { listMIDIOutputsAsync } from "../midi";
 import { dispatchConnectCV, dispatchSetMIDIOutput, dispatchDisconnectCV } from "../store/dispatch";
 import { DragPoint, State } from "../store/reducer";
 import { Connection } from "../types";
@@ -27,7 +27,7 @@ export interface EaselProps {
 const DRAG_RADIUS = 25;
 
 async function initAsync(dispatchSetMIDIOutput: (name: string) => void) {
-    const inputs = await listMIDIDevicesAsync();
+    const inputs = await listMIDIOutputsAsync();
     for (const input of inputs) {
         if (input[1].indexOf("iProgram") !== -1) {
             dispatchSetMIDIOutput(input[0]);

@@ -12,7 +12,7 @@ export const DownloadModalImpl = (props: DownloadModalProps) => {
     const { dispatchHideModal } = props;
 
     return <Modal
-        title="Send Patch to Easel"
+        title="Send patch to easel"
         onCloseClick={dispatchHideModal}>
 
 
