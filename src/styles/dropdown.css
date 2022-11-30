@@ -16,7 +16,7 @@
     font-weight: 400;
     line-height: 1em;
     font-style: normal;
-    font-size: 16px;
+    font-size: 24px;
     text-align: center;
     text-decoration: none;
     user-select: none;
@@ -123,6 +123,9 @@ i.chevron-up::after {
     right: 0;
     width: 12rem;
     margin-top: 0.25rem;
+    max-height: 10rem;
+    border: 2px solid var(--color-outline);
+    overflow-y: auto;
 }
 
 .common-menu-dropdown-pane ul {
@@ -134,6 +137,15 @@ i.chevron-up::after {
 
 .common-menu-dropdown-pane li {
     width: 100%;
+}
+
+.common-menu-dropdown-pane li .common-button {
+    border: none;
+    border-bottom: 2px solid var(--color-outline);
+}
+
+.common-menu-dropdown-pane li:last-child .common-button {
+    border: none;
 }
 
 .common-menu-dropdown-item {

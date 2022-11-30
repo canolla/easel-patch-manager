@@ -73,7 +73,7 @@ export const JackImpl = (props: JackProps) => {
     }
 
     return <>
-        <g transform={`translate(${x} ${y})`}>        
+        <g className="easel-jack" transform={`translate(${x} ${y})`}>        
             <circle
                 ref={handleCircleRef}
                 cx={0}
@@ -85,7 +85,7 @@ export const JackImpl = (props: JackProps) => {
                 cx={0}
                 cy={0}
                 r={INNER_RADIUS}
-                fill="#dedede"
+                fill="var(--color-inner-jack)"
                 stroke="var(--color-outline)"  />
             {text && 
                 <LabelText

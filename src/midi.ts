@@ -1,3 +1,6 @@
+import { CancellationToken } from "./util";
+import store from './store/store';
+
 let midiAccess: WebMidi.MIDIAccess;
 let midiAccessPromise: Promise<WebMidi.MIDIAccess>;
 
@@ -36,7 +39,7 @@ export async function sendMIDIMessage(output: string, bytes: Uint8Array) {
     }
 }
 
-export async function sendMIDIMessagesAsync(output: string, messages: Uint8Array[], onProgress?: (current: number, total: number) => void) {
+export async function sendMIDIMessagesAsync(output: string, messages: Uint8Array[], onProgress?: (current: number, total: number) => void, cancellationToken?: CancellationToken) {
     const access = await getAccessAsync();
 
     const out = access.outputs.get(output);
@@ -45,6 +48,12 @@ export async function sendMIDIMessagesAsync(output: string, messages: Uint8Array
     return new Promise<void>((resolve, reject) => {
         let currentIndex = 0;
         let intervalRef = setInterval(() => {
+            if (cancellationToken?.isCancelled) {
+                clearInterval(intervalRef);
+                resolve();
+                return;
+            }
+
             if (currentIndex === messages.length) {
                 clearInterval(intervalRef);
 
@@ -76,6 +85,15 @@ export async function sendMIDIMessagesAsync(output: string, messages: Uint8Array
             }
 
             currentIndex ++;
-        }, 20)
+        }, messageInterval())
     },)
+}
+
+export function messageInterval() {
+    switch (store.getState().midiSpeed) {
+        case "very-slow": return 200;
+        case "slow": return 100;
+        case "medium": return 50;
+        case "fast": return 20;
+    }
 }

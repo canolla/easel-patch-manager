@@ -11,3 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+g {
+  outline: none;
+}
+
+g:focus-visible {
+  outline: -webkit-focus-ring-color auto 5px;
+}

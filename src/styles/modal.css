@@ -17,7 +17,7 @@
     top: 0;
     bottom: 0;
     background: var(--color-background);
-    opacity: 0.7;
+    opacity: 0.8;
 }
 
 .modal-container .modal {
@@ -38,6 +38,7 @@
     flex-direction: row;
     height: 2.5rem;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .modal .modal-title-container button {
@@ -72,6 +73,11 @@
     user-select: none;
 }
 
+.modal .modal-content {
+    overflow: hidden;
+    flex-grow: 1;
+}
+
 .modal-field {
     display: flex;
     flex-direction: row;
@@ -82,4 +88,47 @@
 .modal-field .modal-field-label {
     color: var(--color-outline);
     margin-right: 2rem;
+    font-size: 24px;
+}
+
+.modal > .common-focus-trap {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-actions {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
+
+.modal-actions .common-button {
+    height: 2.5rem;
+    padding: 0;
+    min-width: 10rem;
+}
+
+.modal-actions .common-button:last-child {
+    margin-right: 0;
+}
+
+.progress-bar {
+    height: 2.5rem;
+    width: 30rem;
+    border: solid 2px var(--color-outline);
+    margin-top: 0.5rem;
+}
+
+.progress-bar-outer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: var(--color-outline);
+    font-size: 24px;
 }

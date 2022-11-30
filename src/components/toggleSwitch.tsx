@@ -1,3 +1,4 @@
+import React from "react";
 import { connect } from "react-redux";
 
 import { dispatchUpdateSwitch } from "../store/dispatch";
@@ -43,7 +44,9 @@ export const ToggleSwitchImpl = (props: ToggleSwitchProps) => {
         cy = TOGGLE_HEIGHT - (TOGGLE_WIDTH / 2);
     }
 
-    const onClick = () => {
+    const onClick = (e?: React.MouseEvent) => {
+        e?.preventDefault();
+        e?.stopPropagation();
         switch (value) {
             case "bottom": return dispatchUpdateSwitch(module, param, "top");
             case "middle": return dispatchUpdateSwitch(module, param, "bottom");
@@ -51,8 +54,21 @@ export const ToggleSwitchImpl = (props: ToggleSwitchProps) => {
         }
     }
 
+    const onKeyDown = (e: React.KeyboardEvent<SVGGElement>) => {
+        const charCode = (typeof e.which == "number") ? e.which : e.keyCode;
+        if (charCode === 13 /* enter */ || charCode === 32 /* space */) {
+            e.preventDefault();
+            onClick()
+        }
+    }
 
-    return <g className="easel-toggle" transform={`translate(${left}, ${top})`} onClick={onClick}>
+
+    return <g
+        className="easel-toggle"
+        transform={`translate(${left}, ${top})`}
+        onClick={onClick}
+        onKeyDown={onKeyDown}
+        tabIndex={0}>
         <rect className="easel-toggle-bg"
             fill="var(--color-switch-bg)"
             height={TOGGLE_HEIGHT}

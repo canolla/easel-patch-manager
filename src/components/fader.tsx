@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { getReadableName } from "../midiMessages";
 import { dispatchUpdateFader } from "../store/dispatch";
 import { State } from "../store/reducer";
 import { toSVGCoordinate } from "../util";
@@ -54,11 +55,43 @@ export const FaderViewImpl = (props: FaderProps) => {
         }
     }
 
+    const onKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "ArrowUp" || e.key === "ArrowRight" || e.key === "PageUp") {
+            dispatchUpdateFader(module, fader, Math.min(value + 100, MAX_VALUE));
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        else if (e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "PageDown") {
+            dispatchUpdateFader(module, fader, Math.max(value - 100, 0));
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        else if (e.key === "End") {
+            dispatchUpdateFader(module, fader, MAX_VALUE);
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        else if (e.key === "Home") {
+            dispatchUpdateFader(module, fader, 0);
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
 
 
     const offset = (1 - (value / MAX_VALUE)) * FADER_HEIGHT;
 
-    return <g transform={`translate(${left}, ${top})`} ref={attachEvents}>
+    return <g
+        transform={`translate(${left}, ${top})`}
+        ref={attachEvents}
+        onKeyDown={onKeyDown}
+        tabIndex={0}
+        role="slider"
+        aria-valuemin={0}
+        aria-valuemax={MAX_VALUE}
+        aria-valuenow={value}
+        aria-label={getReadableName(module, fader)}
+        aria-orientation="vertical">
         <rect className="easel-fader-bg"
             fill={color}
             height={FADER_HEIGHT}

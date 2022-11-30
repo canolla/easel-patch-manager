@@ -2,9 +2,9 @@ import { ConnectionPoint } from "../components/jack";
 import { SavedPatch } from "../indexedDB";
 import { sendMIDIMessage } from "../midi";
 import { createConnectCVMessage, createDisconnectCVMessage, createFaderMessage, createSwitchMessage } from "../midiMessages";
-import { Connection, ConnectionJack, Easel, ModalState, ModalType } from "../types";
+import { Connection, ConnectionJack, Easel, MidiMessageSpeed, ModalState, ModalType } from "../types";
 import { cleanPatchName, decodePatch, emptyPatch, rateLimit } from "../util";
-import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_PATCH, SET_PATCH_NAME, SHOW_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_MIDI_SPEED, SET_PATCH, SET_PATCH_NAME, SHOW_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 export interface State {
     saved?: SavedPatch;
@@ -14,8 +14,10 @@ export interface State {
 
     midiInput?: string;
     midiOutput?: string;
+    midiSpeed: MidiMessageSpeed;
 
     modal?: ModalState;
+
 }
 
 export interface DragPoint {
@@ -29,6 +31,7 @@ const initialState: State = {
     patch: emptyPatch(),
     name: "Untitled",
     dragPoints: [],
+    midiSpeed: "medium"
 }
 
 export function topReducer(state = initialState, action: any): State {
@@ -133,6 +136,11 @@ export function topReducer(state = initialState, action: any): State {
             return {
                 ...state,
                 modal: undefined
+            }
+        case SET_MIDI_SPEED:
+            return {
+                ...state,
+                midiSpeed: action.speed
             }
     }
 

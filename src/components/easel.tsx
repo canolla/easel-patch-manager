@@ -154,7 +154,7 @@ export const EaselImpl = (props: EaselProps) => {
         }
     }
 
-    return <svg viewBox="0 0 1580 900" xmlns="http://www.w3.org/2000/svg" ref={handleSVGRef}>
+    return <svg viewBox="0 0 1580 770" xmlns="http://www.w3.org/2000/svg" ref={handleSVGRef}>
         <defs>
             <pattern id="stripes"
                     x="0" y="0" width="8" height="8"
@@ -170,24 +170,26 @@ export const EaselImpl = (props: EaselProps) => {
 
             </pattern>
         </defs>
-        <TopBar />
-        <Sequencer />
-        <EnvelopeGenerator />
-        <Pulser />
-        <ModulationOscillator />
-        <ComplexOscillatorView />
-        <DualLoPassGates />
-        <Patchbay />
-        { cables }
-        {dragStart &&
-            <Cable
-                x0={dragStart.x}
-                y0={dragStart.y}
-                x1={dragEnd ? dragEnd.x : dragStart.x}
-                y1={dragEnd ? dragEnd.y : dragStart.y}
-                colorIndex={nextColor}
-                />
-        }
+        <g className="easel-content" transform="translate(2, 2)">
+            <TopBar />
+            <Sequencer />
+            <EnvelopeGenerator />
+            <Pulser />
+            <ModulationOscillator />
+            <ComplexOscillatorView />
+            <DualLoPassGates />
+            <Patchbay />
+            { cables }
+            {dragStart &&
+                <Cable
+                    x0={dragStart.x}
+                    y0={dragStart.y}
+                    x1={dragEnd ? dragEnd.x : dragStart.x}
+                    y1={dragEnd ? dragEnd.y : dragStart.y}
+                    colorIndex={nextColor}
+                    />
+            }
+        </g>
     </svg>
 }
 

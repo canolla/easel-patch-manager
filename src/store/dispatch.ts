@@ -11,8 +11,8 @@
 
 import { ConnectionPoint } from "../components/jack";
 import { SavedPatch } from "../indexedDB";
-import { ComplexOscillator, DualLoPassGate, Easel, EnvelopeGenerator, ModulationOscillator, Pulser, Random, SwitchValue, ModalType } from "../types";
-import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_PATCH, SET_PATCH_NAME, SHOW_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { ComplexOscillator, DualLoPassGate, Easel, EnvelopeGenerator, ModulationOscillator, Pulser, Random, SwitchValue, ModalType, MidiMessageSpeed } from "../types";
+import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_MIDI_SPEED, SET_PATCH, SET_PATCH_NAME, SHOW_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 
 export function dispatchUpdateFader(module: "envelope", param: keyof EnvelopeGenerator, value: number): any;
@@ -120,5 +120,12 @@ export function dispatchOpenSavedPatch(patch: SavedPatch) {
     return {
         patch,
         type: OPEN_SAVED_PATCH
+    }
+}
+
+export function dispatchSetMidiSpeed(speed: MidiMessageSpeed) {
+    return {
+        speed,
+        type: SET_MIDI_SPEED
     }
 }

@@ -2,6 +2,7 @@ import * as React from "react";
 
 
 import "../../styles/modal.css";
+import { Button } from "../common/Button";
 import { FocusTrap } from "../common/FocusTrap";
 
 export interface ModalAction {
@@ -20,7 +21,7 @@ export const Modal = (props: React.PropsWithChildren<ModalProps>) => {
     const { title, onCloseClick, actions, children } = props;
     return <div className="modal-container">
         <div className="modal-background" onClick={onCloseClick} />
-            <div className="modal">
+        <div className="modal">
             <FocusTrap onEscape={onCloseClick}>
                 <div className="modal-title-container">
                     <div className="modal-title">
@@ -31,15 +32,16 @@ export const Modal = (props: React.PropsWithChildren<ModalProps>) => {
                 <div className="modal-content">
                     { children }
                 </div>
-                { actions?.length &&
+                { !!actions?.length &&
                     <div className="modal-actions">
                         {actions.map(action => {
                             const { label, onClick, className } = action;
-                            return <button
-                                className={"modal-action" + (className ? " " + className : "")}
-                                onClick={onClick}>
-                                    {label}
-                                </button>
+                            return <Button
+                                key={action.label}
+                                title={label}
+                                label={label}
+                                onClick={onClick}
+                                className={className} />
                         })}
                     </div>
                 }

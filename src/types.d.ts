@@ -3,6 +3,7 @@ import { ModalType } from "./store/reducer";
 
 export type SwitchValue = "top" | "middle" | "bottom";
 export type ParamKind = "fader" | "two-way" | "three-way";
+export type MidiMessageSpeed = "very-slow" | "slow" | "medium" | "fast";
 
 export interface EnvelopeGenerator {
     attack: number;

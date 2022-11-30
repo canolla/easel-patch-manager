@@ -58,7 +58,7 @@ async function lookupEntryAsync(id: number): Promise<SavedPatch | undefined> {
     const db = await initDBAsync();
 
     return new Promise((resolve, reject) => {
-        const transaction = db.transaction(["patches"]);
+        const transaction = db.transaction(["patches"], "readwrite");
         const objectStore = transaction.objectStore("patches");
         const request = objectStore.get(id) as IDBRequest<SavedPatch>;
         request.onerror = event => {
@@ -74,7 +74,7 @@ async function addEntryAsync(entry: SavedPatch): Promise<SavedPatch> {
     const db = await initDBAsync();
 
     return new Promise<SavedPatch>((resolve, reject) => {
-        const transaction = db.transaction(["patches"]);
+        const transaction = db.transaction(["patches"], "readwrite");
         const objectStore = transaction.objectStore("patches");
         const request = objectStore.add(entry);
         request.onerror = event => {
@@ -85,7 +85,6 @@ async function addEntryAsync(entry: SavedPatch): Promise<SavedPatch> {
                 ...entry,
                 id: request.result as number
             })
-            request.result
         };
     })
 }
@@ -94,7 +93,7 @@ async function updateEntryAsync(entry: SavedPatch): Promise<SavedPatch> {
     const db = await initDBAsync();
 
     return new Promise((resolve, reject) => {
-        const transaction = db.transaction(["patches"]);
+        const transaction = db.transaction(["patches"], "readwrite");
         const objectStore = transaction.objectStore("patches");
         const toStore = {
             ...entry,
@@ -117,7 +116,7 @@ async function listEntriesAsync(): Promise<SavedPatch[]> {
     const db = await initDBAsync();
 
     return new Promise((resolve, reject) => {
-        const transaction = db.transaction(["patches"]);
+        const transaction = db.transaction(["patches"], "readwrite");
         const objectStore = transaction.objectStore("patches");
         const request = objectStore.openCursor();
 
@@ -132,6 +131,7 @@ async function listEntriesAsync(): Promise<SavedPatch[]> {
 
             if (cursor) {
                 allEntries.push(cursor.value)
+                cursor.continue();
             }
             else {
                 resolve(allEntries);

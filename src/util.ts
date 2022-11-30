@@ -1,6 +1,14 @@
 import { getMessageName } from "./midiMessages";
 import { Connection, Easel } from "./types";
 
+export class CancellationToken {
+    isCancelled = false;
+
+    cancel() {
+        this.isCancelled = true;
+    }
+}
+
 export function encodePatch(patch: Easel) {
     let bytes = "";
 
@@ -196,7 +204,39 @@ export function distance(x0: number, y0: number, x1: number, y1: number) {
 }
 
 export function cleanPatchName(title: string) {
-    return title.replace(/[^a-zA-Z0-9]/g, "");
+    return title.replace(/[^a-zA-Z0-9 ]/g, "");
+}
+
+export function formatLastEditedDate(date: number) {
+    return describetime(Date.now() / 1000, date / 1000)
+}
+
+function describePlural(value: number, unit: string) {
+    return value + " " + unit + (value == 1 ? "" : "s")
+}
+function describetime(now: number, then: number) {
+    const seconds = now - then
+    if (isNaN(seconds)) return ""
+    if (seconds < 0)
+        return "now"
+    else if (seconds < 10)
+        return "a few seconds ago"
+    else if (seconds < 60)
+        return " " + describePlural(Math.floor(seconds), "second") + " ago"
+    else if (seconds < 2 * 60)
+        return "a minute ago"
+    else if (seconds < 60 * 60)
+        return " " + describePlural(Math.floor(seconds / 60), "minute") + " ago"
+    else if (seconds < 2 * 60 * 60)
+        return "an hour ago";
+    else if (seconds < 60 * 60 * 24)
+        return " " + describePlural(Math.floor(seconds / 60 / 60), "hour") + " ago"
+    else if (seconds < 60 * 60 * 24 * 30)
+        return " " + describePlural(Math.floor(seconds / 60 / 60 / 24), "day") + " ago"
+    else if (seconds < 60 * 60 * 24 * 365)
+        return " " + describePlural(Math.floor(seconds / 60 / 60 / 24 / 30), "month") + " ago"
+    else
+        return " " + describePlural(Math.floor(seconds / 60 / 60 / 24 / 365), "year") + " ago"
 }
 
 export function createPreviewURI(svg: SVGSVGElement) {
@@ -205,6 +245,20 @@ export function createPreviewURI(svg: SVGSVGElement) {
     const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
     clone.appendChild(style);
     style.textContent = previewCSS;
+
+    const content = clone.querySelector(".easel-content");
+
+    clone.setAttribute("viewBox", "0 0 1588 778");
+    content?.setAttribute("transform", "translate(6, 6)")
+
+    const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    bg.setAttribute("x", "2");
+    bg.setAttribute("y", "2");
+    bg.setAttribute("width", "1582");
+    bg.setAttribute("height", "750");
+    bg.setAttribute("fill", "var(--color-preview-bg)");
+
+    clone.insertBefore(bg, clone.firstChild)
 
     const selectorsToRemove = [
         ".title-input",
@@ -232,58 +286,76 @@ export function createPreviewURI(svg: SVGSVGElement) {
 
 const previewCSS = `
 * {
-    --color-sequencer: #333;
-    --color-envelope-generator: #333;
-    --color-pulser: #333;
-    --color-modulation-oscillator: #333;
-    --color-complex-oscillator: #333;
-    --color-dual-lo-pass-gate: #333;
-    --color-random-voltage: #333;
+    --color-preview-fg: #1a2c7d;
+    --color-preview-bg: #fff;
 
-    --color-keyboard-pulse: #333;
-    --color-keyboard-pressure: #333;
-    --color-keyboard-pitch: #333;
-    --color-input: #666;
+    --color-sequencer: var(--color-preview-fg);
+    --color-envelope-generator: var(--color-preview-fg);
+    --color-pulser: var(--color-preview-fg);
+    --color-modulation-oscillator: var(--color-preview-fg);
+    --color-complex-oscillator: var(--color-preview-fg);
+    --color-dual-lo-pass-gate: var(--color-preview-fg);
+    --color-random-voltage: var(--color-preview-fg);
 
-    --color-outline: #000;
-    --color-background: #fff;
-    --color-switch-bg: #fff;
+    --color-keyboard-pulse: var(--color-preview-fg);
+    --color-keyboard-pressure: var(--color-preview-fg);
+    --color-keyboard-pitch: var(--color-preview-fg);
+    --color-input: var(--color-preview-fg);
 
-    --color-cable-0: #fff;
-    --color-cable-1: #fff;
-    --color-cable-2: #fff;
-    --color-cable-3: #fff;
-    --color-cable-4: #fff;
-    --color-cable-5: #fff;
-    --color-cable-6: #fff;
-    --color-cable-7: #fff;
-    --color-cable-8: #fff;
+    --color-outline: var(--color-preview-fg);
+    --color-background: var(--color-preview-bg);
+    --color-switch-bg: var(--color-preview-bg);
+    --color-inner-jack: var(--color-preview-bg);
+
+    --color-cable-0: var(--color-preview-bg);
+    --color-cable-1: var(--color-preview-bg);
+    --color-cable-2: var(--color-preview-bg);
+    --color-cable-3: var(--color-preview-bg);
+    --color-cable-4: var(--color-preview-bg);
+    --color-cable-5: var(--color-preview-bg);
+    --color-cable-6: var(--color-preview-bg);
+    --color-cable-7: var(--color-preview-bg);
+    --color-cable-8: var(--color-preview-bg);
 
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
-
 .easel-text {
     fill: var(--color-outline);
     font-size: 14px;
     user-select: none;
 }
-
 .section>rect {
-    stroke-width: 2;
+    stroke-width: 8;
 }
-
 .cable-bg {
-    stroke-width: 16;
+    stroke-width: 20;
 }
-
-.easel-toggle>circle {
-    fill: #fff;
+.easel-jack>circle {
     stroke: none;
 }
+.easel-toggle>circle {
+    fill: var(--color-preview-bg);
+    stroke: none;
+    transform: translate(0, 13px);
+}
+.easel-toggle>rect {
+    transform: translate(0, 13px);
+    stroke-width: 4;
+}
 .easel-toggle-bg {
-    fill: #000;
+    fill: var(--color-preview-fg);
 }
 .knob-fg {
-    stroke: #fff
+    stroke: var(--color-preview-bg);
+}
+.knob-bg-outline {
+    stroke-width: 26;
+}
+.easel-knob>path {
+    transform: translate(0, 10px);
+}
+.easel-fader-bg {
+    fill-opacity: 1;
+    stroke-width: 4;
 }
 `

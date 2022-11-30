@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { getReadableName } from "../midiMessages";
 import { dispatchUpdateFader } from "../store/dispatch";
 import { State } from "../store/reducer";
 import { toSVGCoordinate } from "../util";
@@ -64,9 +65,42 @@ export const KnobImpl = (props: KnobProps) => {
         }
     }
 
+    const onKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "ArrowUp" || e.key === "ArrowRight" || e.key === "PageUp") {
+            dispatchUpdateFader(module, fader, Math.min(value + 100, MAX_VALUE));
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        else if (e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "PageDown") {
+            dispatchUpdateFader(module, fader, Math.max(value - 100, 0));
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        else if (e.key === "End") {
+            dispatchUpdateFader(module, fader, MAX_VALUE);
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        else if (e.key === "Home") {
+            dispatchUpdateFader(module, fader, 0);
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
+
     const innerArcFlag = angle - minAngle < Math.PI ? "0" : "1";
 
-    return <g transform={`translate(${x}, ${y})`} ref={attachEvents}>
+    return <g
+        className="easel-knob"
+        transform={`translate(${x}, ${y})`}
+        ref={attachEvents}
+        tabIndex={0}
+        role="slider"
+        aria-valuemin={0}
+        aria-valuemax={MAX_VALUE}
+        aria-valuenow={value}
+        aria-label={getReadableName(module, fader)}
+        onKeyDown={onKeyDown}>
         <path
             className="knob-bg-outline"
             d={`M ${Math.cos(minAngle) * KNOB_RADIUS} ${Math.sin(minAngle) * KNOB_RADIUS} A ${KNOB_RADIUS} ${KNOB_RADIUS} 0 1 1 ${Math.cos(maxAngle) * KNOB_RADIUS} ${Math.sin(maxAngle) * KNOB_RADIUS}`}

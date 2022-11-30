@@ -1,9 +1,10 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { dispatchSetPatchName, dispatchShowModal } from "../../store/dispatch";
+import { SavedPatch, savePatchAsync, updatePatchAsync } from "../../indexedDB";
+import { dispatchSetPatchName, dispatchShowModal, dispatchOpenSavedPatch } from "../../store/dispatch";
 import { State } from "../../store/reducer";
-import { ModalType } from "../../types";
-import { createPreviewURI } from "../../util";
+import { Easel, ModalType } from "../../types";
+import { createPreviewURI, encodePatch } from "../../util";
 import { IconButton } from "../iconButton";
 import { DownloadIcon } from "../icons/downloadIcon";
 import { FolderIcon } from "../icons/folderIcon";
@@ -16,19 +17,35 @@ import { TitleInput } from "../titleInput";
 export interface TopBarProps {
     dispatchSetPatchName: (name: string) => void;
     dispatchShowModal: (type: ModalType) => void;
+    dispatchOpenSavedPatch: (patch: SavedPatch) => void;
     patchName: string;
+    saved?: SavedPatch;
+    patch: Easel;
 }
 
 export const TopBarImpl = (props: TopBarProps) => {
-    const { patchName, dispatchSetPatchName, dispatchShowModal } = props;
+    const { patchName, saved, patch, dispatchSetPatchName, dispatchShowModal, dispatchOpenSavedPatch } = props;
 
     let svgRef: SVGSVGElement;
     const handleRef = (ref: SVGGElement) => {
         if (ref) svgRef = ref.ownerSVGElement!
     }
 
-    const onSaveClicked = () => {
-        console.log(createPreviewURI(svgRef))
+    const onSaveClicked = async () => {
+        let saveResult: SavedPatch;
+        if (saved) {
+            saveResult = await updatePatchAsync({
+                ...saved,
+                patch: encodePatch(patch),
+                preview: createPreviewURI(svgRef),
+                name: patchName
+            });
+        }
+        else {
+            saveResult = await savePatchAsync(patchName, patch, createPreviewURI(svgRef));
+        }
+
+        dispatchOpenSavedPatch(saveResult);
     }
 
 
@@ -39,23 +56,23 @@ export const TopBarImpl = (props: TopBarProps) => {
             <IconButton
                 left={15}
                 top={45}
+                title="Saved Patches"
+                onClick={() => dispatchShowModal("file")}>
+                <FolderIcon />
+            </IconButton>
+            <IconButton
+                left={90}
+                top={45}
                 title="Save Patch"
                 onClick={onSaveClicked}>
                 <SaveIcon />
             </IconButton>
             <IconButton
-                left={90}
+                left={165}
                 top={45}
                 title="Send patch to easel"
                 onClick={() => dispatchShowModal("download")}>
                 <DownloadIcon />
-            </IconButton>
-            <IconButton
-                left={165}
-                top={45}
-                title="Saved Patches"
-                onClick={() => dispatchShowModal("file")}>
-                <FolderIcon />
             </IconButton>
             <IconButton
                 left={240}
@@ -118,7 +135,6 @@ export const TopBarImpl = (props: TopBarProps) => {
         </Section>
         <Section left={1275} top={0} width={300} height={120}>
             <Section left={0} top={0} width={300} height={30} label="PRE AMP / ENVELOPE DETECTOR" />
-            <Section left={10} top={40} width={180} height={70} fill="url(#stripes)" />
             <Jack
                 x={250}
                 y={65}
@@ -134,13 +150,16 @@ function mapStateToProps(state: State, ownProps: any) {
 
     return {
         ...ownProps,
-        patchName: state.name
+        patchName: state.name,
+        saved: state.saved,
+        patch: state.patch
     }
 }
 
 const mapDispatchToProps = {
     dispatchSetPatchName,
-    dispatchShowModal
+    dispatchShowModal,
+    dispatchOpenSavedPatch
 };
 
 export const TopBar = connect(mapStateToProps, mapDispatchToProps)(TopBarImpl);

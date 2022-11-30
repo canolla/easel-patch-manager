@@ -330,7 +330,7 @@ const definitions = [
     {
         "name": "fd_svs_1",
         "length": 27,
-        "template": "f0 18 2f 66 64 5f 73 76 73 5f 32 00 00 00 2c 69 69 00 00 00 00 00 00 00 XX XX f7",
+        "template": "f0 18 2f 66 64 5f 73 76 73 5f 31 00 00 00 2c 69 69 00 00 00 00 00 00 00 XX XX f7",
         "arguments": [
             {
                 "offset": 24,
@@ -364,7 +364,7 @@ const definitions = [
     {
         "name": "fd_svs_3",
         "length": 27,
-        "template": "f0 18 2f 66 64 5f 73 76 73 5f 32 00 00 00 2c 69 69 00 00 00 00 00 00 00 XX XX f7",
+        "template": "f0 18 2f 66 64 5f 73 76 73 5f 33 00 00 00 2c 69 69 00 00 00 00 00 00 00 XX XX f7",
         "arguments": [
             {
                 "offset": 24,
@@ -720,7 +720,7 @@ const definitions = [
     {
         "name": "ps_clearBuffer",
         "length": 23,
-        "template": "f0 14 2f 70 73 5f 63 6c 65 61 72 42 75 66 66 65 72 00 2c 00 00 00 f7",
+        "template": "f0 14 2f 70 73 5f 63 6c 65 61 72 42 75 66 66 65 72 00 2c 00 00 00 f7 ff",
         "arguments": []
     },
     {
@@ -738,7 +738,7 @@ const definitions = [
     {
         "name": "ps_setName",
         "length": 35,
-        "template": "f0 20 2f 70 73 5f 73 65 74 4e 61 6d 65 00 2c 69 73 00 00 00 00 01 49",
+        "template": "f0 20 2f 70 73 5f 73 65 74 4e 61 6d 65 00 2c 69 73 00 00 00 00 01",
         "arguments": []
     }
 ];
@@ -860,7 +860,7 @@ function getMessageBytes(template: string) {
     return out;
 }
 
-export function createFaderMessage(module: string, key: string, value: number) {
+export function createFaderMessage(module: string, key: string, value: number, saveBuffer = false) {
     const out = getMessageTemplateBytes(module, key);
 
     value = Math.max(0, Math.min(0x7ff, value));
@@ -868,10 +868,14 @@ export function createFaderMessage(module: string, key: string, value: number) {
     out[out.length - 2] = value & 0x7f;
     out[out.length - 3] = (value >> 7) & 0xf;
 
+    if (saveBuffer) {
+        out[out.length - 6] = 1;
+    }
+
     return out;
 }
 
-export function createSwitchMessage(module: string, key: string, value: "top" | "middle" | "bottom") {
+export function createSwitchMessage(module: string, key: string, value: "top" | "middle" | "bottom", saveBuffer = false) {
     const out = getMessageTemplateBytes(module, key);
 
     let num: number;
@@ -882,10 +886,15 @@ export function createSwitchMessage(module: string, key: string, value: "top" | 
     }
 
     out[out.length - 2] = num;
+
+    if (saveBuffer) {
+        out[out.length - 6] = 1;
+    }
+
     return out;
 }
 
-export function createConnectCVMessage(from: number, to: number) {
+export function createConnectCVMessage(from: number, to: number, saveBuffer = false) {
     const msg = getMessageByName("cv_connect");
     const out = getMessageBytes(msg!.template);
 
@@ -901,6 +910,10 @@ export function createConnectCVMessage(from: number, to: number) {
     out[29] = connectionIds[ConnectionPoint[from]]
     // input
     out[33] = connectionIds[ConnectionPoint[to]]
+
+    if (saveBuffer) {
+        out[25] = 1;
+    }
 
     return out;
 }
@@ -944,16 +957,29 @@ export function createSaveMessage(saveIndex: number) {
 export function createSetNameMessage(name: string) {
     const msg = getMessageByName("ps_setName");
     const prefix = getMessageBytes(msg!.template);
+    const out = new Uint8Array(prefix.length + name.length + 3);
 
-    const out = new Uint8Array(prefix.length + name.length + 1);
     out.set(prefix, 0);
     for (let i = 0; i < name.length; i++) {
         out[prefix.length + i] = name.charCodeAt(i);
     }
 
     out[out.length - 1] = 0xf7;
-    
     return out;
+}
+
+export function createDisconnectAllMessages() {
+    const outputs = Object.keys(connectionIds).filter(key => key.indexOf("Output") !== -1).map(key => connectionIds[key]);
+    const inputs = Object.keys(connectionIds).filter(key => key.indexOf("Output") !== -1).map(key => connectionIds[key]);
+
+    const messages = [];
+    for (const outId of outputs) {
+        for (const inId of inputs) {
+            messages.push(createDisconnectCVMessage(outId, inId));
+        }
+    }
+
+    return messages;
 }
 
 export function createPatchMessages(easel: Easel, clearBuffer: boolean, name?: string, saveIndex?: number) {
@@ -963,34 +989,40 @@ export function createPatchMessages(easel: Easel, clearBuffer: boolean, name?: s
         queue.push(createClearBufferMessage());
     }
 
+    const isSave = saveIndex !== undefined;
+
     forEachValue(easel, (value, bytes, module, param, rawValue) => {
         const messageName = getMessageName(module, param);
 
         if (messageName.startsWith("fd") || messageName.startsWith("kn")) {
-            queue.push(createFaderMessage(module, param, rawValue));
+            queue.push(createFaderMessage(module, param, rawValue, isSave));
         }
         else {
-            queue.push(createSwitchMessage(module, param, rawValue));
+            queue.push(createSwitchMessage(module, param, rawValue, isSave));
         }
         return 0;
     });
 
     for (const connection of easel.connections) {
-        queue.push(createConnectCVMessage(connection.start.connectionPoint, connection.end.connectionPoint));
+        queue.push(createConnectCVMessage(connection.start.connectionPoint, connection.end.connectionPoint, isSave));
     }
 
     if (name) {
         queue.push(createSetNameMessage(name));
     }
 
-    if (saveIndex !== undefined) {
+    if (isSave) {
         queue.push(createSaveMessage(saveIndex))
     }
 
     return queue;
 }
 
-const readableNames = {
+export function getReadableName(module: string, param: string) {
+    return readableNames[getMessageName(module, param)];
+}
+
+const readableNames: {[index: string]: string} = {
     "sw_svs_trigger": "Sequencer Trigger Mode",
     "sw_svs_stages": "Sequencer Stages",
     "fd_svs_1": "Sequencer Stage 1",
@@ -1012,22 +1044,22 @@ const readableNames = {
     "sw_p_mode": "Pulser Mode",
     "fd_p_period": "Pulser Period",
     "fd_p_cvs": "Pulser Period CV",
-    "sw_mo_keyboard": "Mod Osc Key Tracking",
-    "sw_mo_waveshape": "Mod Osc Waveshape",
-    "sw_mo_range": "Mod Osc Range",
-    "sw_mo_mod": "Mod Osc Modulation Type",
-    "fd_mo_freq": "Mod Osc Frequency",
-    "fd_mo_cvsFreq": "Mod Osc Frequency CV",
-    "fd_mo_mod": "Mod Osc Modulation",
-    "fd_mo_cvsMod": "Mod Osc Moduplation CV",
-    "sw_co_keyboard": "Comp Osc Key Tracking",
-    "sw_co_timbre": "Comp Osc Waveshape Switch",
-    "sw_co_polarity": "Comp Osc Polarity",
-    "fd_co_pitch": "Comp Osc Pitch",
-    "fd_co_cvsPitch": "Comp Osc Pitch CV",
-    "fd_co_timbre": "Comp Osc Timbre",
-    "fd_co_cvsTimbre": "Comp Osc Timbre CV",
-    "kn_co_timbre": "Comp Osc Waveshape",
+    "sw_mo_keyboard": "Mod Oscillator Key Tracking",
+    "sw_mo_waveshape": "Mod Oscillator Waveshape",
+    "sw_mo_range": "Mod Oscillator Range",
+    "sw_mo_mod": "Mod Oscillator Modulation Type",
+    "fd_mo_freq": "Mod Oscillator Frequency",
+    "fd_mo_cvsFreq": "Mod Oscillator Frequency CV",
+    "fd_mo_mod": "Mod Oscillator Modulation",
+    "fd_mo_cvsMod": "Mod Oscillator Moduplation CV",
+    "sw_co_keyboard": "Comp Oscillator Key Tracking",
+    "sw_co_timbre": "Comp Oscillator Waveshape Switch",
+    "sw_co_polarity": "Comp Oscillator Polarity",
+    "fd_co_pitch": "Comp Oscillator Pitch",
+    "fd_co_cvsPitch": "Comp Oscillator Pitch CV",
+    "fd_co_timbre": "Comp Oscillator Timbre",
+    "fd_co_cvsTimbre": "Comp Oscillator Timbre CV",
+    "kn_co_timbre": "Comp Oscillator Waveshape",
     "sw_gate2Source": "Gate 2 Source",
     "sw_gate1Mode": "Gate 1 Mode",
     "sw_gate2Mode": "Gate 2 Mode",

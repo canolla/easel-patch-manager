@@ -28,7 +28,8 @@ export const IconButton = (props: React.PropsWithChildren<IconButtonProps>) => {
         aria-label={title}
         onClick={onClick}
         onKeyDown={onKeydown}
-        tabIndex={0}>
+        tabIndex={0}
+        role="button">
         <rect
             stroke="var(--color-outline)"
             width={ICON_BUTTON_WIDTH}

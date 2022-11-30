@@ -3,7 +3,7 @@
     width: calc(100% - 1rem);
     border: none;
     background: none;
-    font-size: 40px;
     margin-top: 0.5rem;
+    font-size: 40px;
     color: var(--color-outline);
 }
