@@ -4,15 +4,25 @@ import './styles/colors.css';
 import { Easel } from './components/easel';
 import store from './store/store';
 import { decodePatch, encodePatch, throttle } from './util';
-import { dispatchSetPatch } from './store/dispatch';
+import { dispatchSetPatch, dispatchSetPatchEdited } from './store/dispatch';
 import { State } from './store/reducer';
 import { connect } from 'react-redux';
 import { ModalState } from './types';
 import { AppModal } from './components/modals/appModal';
 
 store.subscribe(throttle(() => {
-	const current = store.getState().patch;
-	window.location.replace("#" + encodePatch(current))
+	const state = store.getState();
+	const current = state.patch;
+	const encoded = encodePatch(current);
+	window.location.replace("#" + encoded);
+
+	if (state.saved) {
+		const edited = state.saved.patch !== encoded;
+
+		if (!!(state.patchEdited) !== edited) {
+			store.dispatch(dispatchSetPatchEdited(edited));
+		}
+	}
 }, 500))
 
 interface AppProps {

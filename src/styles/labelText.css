@@ -3,3 +3,7 @@
     font-size: 14px;
     user-select: none;
 }
+
+.easel-text.big {
+    font-size: 24px;
+}

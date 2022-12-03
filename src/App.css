@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  position: relative;
+}
+
+.App > svg {
+  height: 700px;
 }
 
 .App-logo {

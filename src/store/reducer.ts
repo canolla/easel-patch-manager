@@ -4,7 +4,7 @@ import { sendMIDIMessage } from "../midi";
 import { createConnectCVMessage, createDisconnectCVMessage, createFaderMessage, createSwitchMessage } from "../midiMessages";
 import { Connection, ConnectionJack, Easel, MidiMessageSpeed, ModalState, ModalType } from "../types";
 import { cleanPatchName, decodePatch, emptyPatch, rateLimit } from "../util";
-import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_MIDI_SPEED, SET_PATCH, SET_PATCH_NAME, SHOW_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_MIDI_SPEED, SET_PATCH, SET_PATCH_EDITED, SET_PATCH_NAME, SHOW_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 export interface State {
     saved?: SavedPatch;
@@ -17,7 +17,7 @@ export interface State {
     midiSpeed: MidiMessageSpeed;
 
     modal?: ModalState;
-
+    patchEdited?: boolean;
 }
 
 export interface DragPoint {
@@ -31,7 +31,7 @@ const initialState: State = {
     patch: emptyPatch(),
     name: "Untitled",
     dragPoints: [],
-    midiSpeed: "medium"
+    midiSpeed: "medium",
 }
 
 export function topReducer(state = initialState, action: any): State {
@@ -43,7 +43,8 @@ export function topReducer(state = initialState, action: any): State {
                 ...state,
                 saved: action.patch,
                 name: action.patch.name,
-                patch: decodePatch(action.patch.patch)
+                patch: decodePatch(action.patch.patch),
+                patchEdited: false
             };
         case SET_PATCH:
             return {
@@ -126,7 +127,6 @@ export function topReducer(state = initialState, action: any): State {
                 ...state,
                 name: cleanPatchName(action.name)
             }
-
         case SHOW_MODAL:
             return {
                 ...state,
@@ -141,6 +141,11 @@ export function topReducer(state = initialState, action: any): State {
             return {
                 ...state,
                 midiSpeed: action.speed
+            }
+        case SET_PATCH_EDITED:
+            return {
+                ...state,
+                patchEdited: action.edited
             }
     }
 

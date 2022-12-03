@@ -11,6 +11,7 @@ import { FolderIcon } from "../icons/folderIcon";
 import { MidiIcon } from "../icons/midiIcon";
 import { SaveIcon } from "../icons/saveIcon";
 import { Jack, ConnectionPoint } from "../jack";
+import { LabelText } from "../labelText";
 import { Section } from "../section";
 import { TitleInput } from "../titleInput";
 
@@ -21,10 +22,11 @@ export interface TopBarProps {
     patchName: string;
     saved?: SavedPatch;
     patch: Easel;
+    patchNotSaved: boolean;
 }
 
 export const TopBarImpl = (props: TopBarProps) => {
-    const { patchName, saved, patch, dispatchSetPatchName, dispatchShowModal, dispatchOpenSavedPatch } = props;
+    const { patchName, saved, patch, patchNotSaved, dispatchSetPatchName, dispatchShowModal, dispatchOpenSavedPatch } = props;
 
     let svgRef: SVGSVGElement;
     const handleRef = (ref: SVGGElement) => {
@@ -135,6 +137,12 @@ export const TopBarImpl = (props: TopBarProps) => {
         </Section>
         <Section left={1275} top={0} width={300} height={120}>
             <Section left={0} top={0} width={300} height={30} label="PRE AMP / ENVELOPE DETECTOR" />
+            {patchNotSaved &&
+                <g transform="translate(15, 45)">
+                    <LabelText className="big" x={90} y={28} text="Patch not" anchor="middle" />
+                    <LabelText className="big" x={90} y={50} text="saved!" anchor="middle" />
+                </g>
+            }
             <Jack
                 x={250}
                 y={65}
@@ -148,11 +156,18 @@ export const TopBarImpl = (props: TopBarProps) => {
 function mapStateToProps(state: State, ownProps: any) {
     if (!state) return {};
 
+    let patchNotSaved = !state.saved;
+
+    if (state.saved) {
+        patchNotSaved = state.patchEdited || state.saved.name !== state.name;
+    }
+
     return {
         ...ownProps,
         patchName: state.name,
         saved: state.saved,
-        patch: state.patch
+        patch: state.patch,
+        patchNotSaved
     }
 }
 

@@ -3,6 +3,7 @@ import * as React from "react";
 import "../styles/labelText.css"
 
 export interface LabelTextProps {
+    className?: string;
     x: number;
     y: number;
     text: string;
@@ -11,9 +12,9 @@ export interface LabelTextProps {
 }
 
 export const LabelText = (props: LabelTextProps) => {
-    const { x, y, text, anchor, alignment } = props;
+    const { x, y, text, anchor, alignment, className } = props;
     return <text 
-        className="easel-text"
+        className={["easel-text", className].filter(e => !!e).join(" ")}
         x={x}
         y={y}
         textAnchor={anchor}
