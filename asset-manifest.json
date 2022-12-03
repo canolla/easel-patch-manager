@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/easel-patch-manager/static/css/main.918fd59c.chunk.css",
-    "main.js": "/easel-patch-manager/static/js/main.b8bd7f4e.chunk.js",
-    "main.js.map": "/easel-patch-manager/static/js/main.b8bd7f4e.chunk.js.map",
+    "main.css": "/easel-patch-manager/static/css/main.28d75305.chunk.css",
+    "main.js": "/easel-patch-manager/static/js/main.2aa18b41.chunk.js",
+    "main.js.map": "/easel-patch-manager/static/js/main.2aa18b41.chunk.js.map",
     "runtime-main.js": "/easel-patch-manager/static/js/runtime-main.44c91211.js",
     "runtime-main.js.map": "/easel-patch-manager/static/js/runtime-main.44c91211.js.map",
     "static/js/2.14b3e13b.chunk.js": "/easel-patch-manager/static/js/2.14b3e13b.chunk.js",
@@ -10,13 +10,13 @@
     "static/js/3.7a675e0e.chunk.js": "/easel-patch-manager/static/js/3.7a675e0e.chunk.js",
     "static/js/3.7a675e0e.chunk.js.map": "/easel-patch-manager/static/js/3.7a675e0e.chunk.js.map",
     "index.html": "/easel-patch-manager/index.html",
-    "static/css/main.918fd59c.chunk.css.map": "/easel-patch-manager/static/css/main.918fd59c.chunk.css.map",
+    "static/css/main.28d75305.chunk.css.map": "/easel-patch-manager/static/css/main.28d75305.chunk.css.map",
     "static/js/2.14b3e13b.chunk.js.LICENSE.txt": "/easel-patch-manager/static/js/2.14b3e13b.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.44c91211.js",
     "static/js/2.14b3e13b.chunk.js",
-    "static/css/main.918fd59c.chunk.css",
-    "static/js/main.b8bd7f4e.chunk.js"
+    "static/css/main.28d75305.chunk.css",
+    "static/js/main.2aa18b41.chunk.js"
   ]
 }
