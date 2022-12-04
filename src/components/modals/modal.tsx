@@ -14,14 +14,15 @@ export interface ModalAction {
 export interface ModalProps {
     title: string
     onCloseClick: () => void;
+    className?: string;
     actions?: ModalAction[]
 }
 
 export const Modal = (props: React.PropsWithChildren<ModalProps>) => {
-    const { title, onCloseClick, actions, children } = props;
+    const { title, onCloseClick, actions, children, className } = props;
     return <div className="modal-container">
         <div className="modal-background" onClick={onCloseClick} />
-        <div className="modal">
+        <div className={["modal", className].filter(c => !!c).join(" ")}>
             <FocusTrap onEscape={onCloseClick}>
                 <div className="modal-title-container">
                     <div className="modal-title">

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { allPatchesAsync, SavedPatch } from "../../indexedDB";
-import { dispatchHideModal, dispatchOpenSavedPatch } from "../../store/dispatch";
+import { dispatchHideModal, dispatchOpenSavedPatch, dispatchShowSaveModal } from "../../store/dispatch";
 import { State } from "../../store/reducer";
 import { formatLastEditedDate } from "../../util";
 import { Modal } from "./modal";
@@ -11,10 +11,12 @@ import "../../styles/fileModal.css";
 export interface FileModalProps {
     dispatchHideModal: () => void;
     dispatchOpenSavedPatch: (patch: SavedPatch) => void;
+    dispatchShowSaveModal: (patch: SavedPatch) => void;
+    patchNotSaved: boolean;
 }
 
 export const FileModalImpl = (props: FileModalProps) => {
-    const { dispatchHideModal, dispatchOpenSavedPatch } = props;
+    const { dispatchHideModal, dispatchOpenSavedPatch, dispatchShowSaveModal, patchNotSaved } = props;
     const [savedProjects, setSavedProjects] = React.useState<SavedPatch[]>([]);
 
     React.useEffect(() => {
@@ -22,8 +24,13 @@ export const FileModalImpl = (props: FileModalProps) => {
     }, [])
 
     const onPatchClick = (patch: SavedPatch) => {
-        dispatchOpenSavedPatch(patch);
         dispatchHideModal();
+        if (patchNotSaved) {
+            dispatchShowSaveModal(patch);
+        }
+        else {
+            dispatchOpenSavedPatch(patch);
+        }
     }
 
     return <Modal
@@ -54,14 +61,22 @@ export const FileModalImpl = (props: FileModalProps) => {
 function mapStateToProps(state: State, ownProps: any) {
     if (!state) return {};
 
+    let patchNotSaved = !state.saved;
+
+    if (state.saved) {
+        patchNotSaved = state.patchEdited || state.saved.name !== state.name;
+    }
+
     return {
         ...ownProps,
+        patchNotSaved
     }
 }
 
 const mapDispatchToProps = {
     dispatchHideModal,
-    dispatchOpenSavedPatch
+    dispatchOpenSavedPatch,
+    dispatchShowSaveModal
 };
 
 export const FileModal = connect(mapStateToProps, mapDispatchToProps)(FileModalImpl);

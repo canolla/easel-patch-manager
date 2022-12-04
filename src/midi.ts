@@ -89,6 +89,16 @@ export async function sendMIDIMessagesAsync(output: string, messages: Uint8Array
     },)
 }
 
+export async function addConnectionChangedListener(handler: () => void) {
+    const access = await getAccessAsync();
+    access.addEventListener("statechange", handler);
+}
+
+export async function removeConnectionChangedListener(handler: () => void) {
+    const access = await getAccessAsync();
+    access.removeEventListener("statechange", handler);
+} 
+
 export function messageInterval() {
     switch (store.getState().midiSpeed) {
         case "very-slow": return 200;

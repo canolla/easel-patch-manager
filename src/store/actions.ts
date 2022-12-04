@@ -13,5 +13,6 @@ export const SET_PATCH_EDITED = "SET_PATCH_EDITED";
 
 export const SHOW_MODAL = "SHOW_MODAL";
 export const HIDE_MODAL = "HIDE_MODAL";
+export const SHOW_SAVE_MODAL = "SHOW_SAVE_MODAL";
 
 export const OPEN_SAVED_PATCH = "OPEN_SAVED_PATCH";

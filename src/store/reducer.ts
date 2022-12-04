@@ -4,7 +4,7 @@ import { sendMIDIMessage } from "../midi";
 import { createConnectCVMessage, createDisconnectCVMessage, createFaderMessage, createSwitchMessage } from "../midiMessages";
 import { Connection, ConnectionJack, Easel, MidiMessageSpeed, ModalState, ModalType } from "../types";
 import { cleanPatchName, decodePatch, emptyPatch, rateLimit } from "../util";
-import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_MIDI_SPEED, SET_PATCH, SET_PATCH_EDITED, SET_PATCH_NAME, SHOW_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_MIDI_SPEED, SET_PATCH, SET_PATCH_EDITED, SET_PATCH_NAME, SHOW_MODAL, SHOW_SAVE_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 export interface State {
     saved?: SavedPatch;
@@ -131,6 +131,14 @@ export function topReducer(state = initialState, action: any): State {
             return {
                 ...state,
                 modal: defaultModalState(action.modalType)
+            }
+        case SHOW_SAVE_MODAL:
+            return {
+                ...state,
+                modal: {
+                    type: "save",
+                    patchToLoad: action.patch
+                }
             }
         case HIDE_MODAL:
             return {
@@ -265,5 +273,5 @@ function breakConnection(existing: Connection[], startPoint: ConnectionPoint, st
 function defaultModalState(type: ModalType): ModalState {
     return {
         type
-    }
+    } as any
 }

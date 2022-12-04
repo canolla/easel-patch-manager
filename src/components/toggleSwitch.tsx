@@ -7,6 +7,8 @@ import { State } from "../store/reducer";
 import { SwitchValue } from "../types";
 import { LabelText } from "./labelText";
 
+import "../styles/toggleSwitch.css";
+
 export interface ToggleSwitchProps {
     color: string;
     top: number;

@@ -1,0 +1,7 @@
+.cable {
+    cursor: pointer;
+}
+
+.cable.dragging {
+    cursor: grabbing;
+}

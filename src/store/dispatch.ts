@@ -12,7 +12,7 @@
 import { ConnectionPoint } from "../components/jack";
 import { SavedPatch } from "../indexedDB";
 import { ComplexOscillator, DualLoPassGate, Easel, EnvelopeGenerator, ModulationOscillator, Pulser, Random, SwitchValue, ModalType, MidiMessageSpeed } from "../types";
-import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_MIDI_SPEED, SET_PATCH, SET_PATCH_EDITED, SET_PATCH_NAME, SHOW_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_MIDI_SPEED, SET_PATCH, SET_PATCH_EDITED, SET_PATCH_NAME, SHOW_MODAL, SHOW_SAVE_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 
 export function dispatchUpdateFader(module: "envelope", param: keyof EnvelopeGenerator, value: number): any;
@@ -134,5 +134,12 @@ export function dispatchSetPatchEdited(edited: boolean) {
     return {
         edited,
         type: SET_PATCH_EDITED
+    }
+}
+
+export function dispatchShowSaveModal(patch: SavedPatch) {
+    return {
+        patch,
+        type: SHOW_SAVE_MODAL
     }
 }

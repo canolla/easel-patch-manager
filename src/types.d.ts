@@ -1,4 +1,5 @@
 import { ConnectionPoint } from "./components/jack";
+import { SavedPatch } from "./indexedDB";
 import { ModalType } from "./store/reducer";
 
 export type SwitchValue = "top" | "middle" | "bottom";
@@ -104,6 +105,7 @@ export type ModalState = SaveModalState | DownloadModalState | FileModalState | 
 
 export interface SaveModalState extends BaseModal {
     type: "save";
+    patchToLoad: SavedPatch;
 }
 
 export interface DownloadModalState extends BaseModal {

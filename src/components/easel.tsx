@@ -180,8 +180,14 @@ export const EaselImpl = (props: EaselProps) => {
             <DualLoPassGates />
             <Patchbay />
             { cables }
+            {dragPoints && 
+                dragPoints.map(p => 
+                    <circle className="drag-point" cx={p.x} cy={p.y} r={DRAG_RADIUS} opacity={0} />
+                )
+            }
             {dragStart &&
                 <Cable
+                    dragging={true}
                     x0={dragStart.x}
                     y0={dragStart.y}
                     x1={dragEnd ? dragEnd.x : dragStart.x}
@@ -189,6 +195,7 @@ export const EaselImpl = (props: EaselProps) => {
                     colorIndex={nextColor}
                     />
             }
+
         </g>
     </svg>
 }

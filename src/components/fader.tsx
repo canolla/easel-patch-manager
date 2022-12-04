@@ -5,6 +5,7 @@ import { dispatchUpdateFader } from "../store/dispatch";
 import { State } from "../store/reducer";
 import { toSVGCoordinate } from "../util";
 import { LabelText } from "./labelText";
+import "../styles/fader.css";
 
 export interface FaderProps {
     color: string;
@@ -82,6 +83,7 @@ export const FaderViewImpl = (props: FaderProps) => {
     const offset = (1 - (value / MAX_VALUE)) * FADER_HEIGHT;
 
     return <g
+        className="easel-fader"
         transform={`translate(${left}, ${top})`}
         ref={attachEvents}
         onKeyDown={onKeyDown}

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { listMIDIInputsAsync } from "../../midi";
+import { addConnectionChangedListener, listMIDIInputsAsync, removeConnectionChangedListener } from "../../midi";
 import { dispatchHideModal, dispatchSetMIDIInput } from "../../store/dispatch";
 import { State } from "../../store/reducer";
 import { Dropdown, DropdownItem } from "../common/Dropdown";
@@ -19,8 +19,16 @@ export const MidiModalImpl = (props: MidiModalProps) => {
     const [midiInputs, setMidiInputs] = React.useState<[string, string][]>([]);
 
     React.useEffect(() => {
-        listMIDIInputsAsync().then(setMidiInputs);
-    }, [])
+        const updateMidiInputsAsync = async () => {
+            const inputs = await listMIDIInputsAsync();
+            setMidiInputs(inputs);
+        }
+
+        addConnectionChangedListener(updateMidiInputsAsync);
+        return () => {
+            removeConnectionChangedListener(updateMidiInputsAsync);
+        }
+    }, []);
 
     const inputs: DropdownItem[] = [
         {

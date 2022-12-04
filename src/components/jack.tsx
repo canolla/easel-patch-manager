@@ -4,6 +4,7 @@ import { dispatchSetDragPoint } from "../store/dispatch";
 import { State } from "../store/reducer";
 import { toSVGCoordinate } from "../util";
 import { LabelText } from "./labelText";
+import "../styles/jack.css";
 
 export enum ConnectionPoint {
     PulseOutput,

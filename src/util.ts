@@ -269,7 +269,8 @@ export function createPreviewURI(svg: SVGSVGElement) {
         ".easel-fader-bg.filled",
         "foreignObject",
         ".knob-fg-outline",
-        ".knob-bg"
+        ".knob-bg",
+        ".drag-point"
     ]
 
     for (const selector of selectorsToRemove) {
