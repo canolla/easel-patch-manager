@@ -105,7 +105,7 @@ export type ModalState = SaveModalState | DownloadModalState | FileModalState | 
 
 export interface SaveModalState extends BaseModal {
     type: "save";
-    patchToLoad: SavedPatch;
+    patchToLoad?: SavedPatch;
 }
 
 export interface DownloadModalState extends BaseModal {

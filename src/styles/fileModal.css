@@ -17,6 +17,23 @@
     cursor: pointer;
 }
 
+.saved-patch-list-item.new-patch {
+    height: 3rem;
+    color: var(--color-outline);
+    background: var(--color-background);
+    padding: 0.5rem;
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.saved-patch-list-item.new-patch:hover {
+    background: var(--color-outline);
+    color: var(--color-background);
+} 
+
 .saved-patch-detail {
     display: flex;
     flex-direction: column;

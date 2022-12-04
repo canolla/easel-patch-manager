@@ -1,10 +1,11 @@
 import { ConnectionPoint } from "../components/jack";
 import { SavedPatch } from "../indexedDB";
+import { setLastEditedProject } from "../localStorage";
 import { sendMIDIMessage } from "../midi";
 import { createConnectCVMessage, createDisconnectCVMessage, createFaderMessage, createSwitchMessage } from "../midiMessages";
 import { Connection, ConnectionJack, Easel, MidiMessageSpeed, ModalState, ModalType } from "../types";
 import { cleanPatchName, decodePatch, emptyPatch, rateLimit } from "../util";
-import { CONNECT_CV, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_MIDI_SPEED, SET_PATCH, SET_PATCH_EDITED, SET_PATCH_NAME, SHOW_MODAL, SHOW_SAVE_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
+import { CONNECT_CV, CREATE_NEW_PATCH, DISCONNECT_CV, HIDE_MODAL, OPEN_SAVED_PATCH, SET_DRAG_POINT, SET_MIDI_INPUT, SET_MIDI_OUTPUT, SET_MIDI_SPEED, SET_PATCH, SET_PATCH_EDITED, SET_PATCH_NAME, SHOW_MODAL, SHOW_SAVE_MODAL, UPDATE_FADER, UPDATE_SWITCH } from "./actions";
 
 export interface State {
     saved?: SavedPatch;
@@ -39,6 +40,9 @@ export function topReducer(state = initialState, action: any): State {
     
     switch (action.type) {
         case OPEN_SAVED_PATCH:
+            if (action.patch.id) {
+                setLastEditedProject(action.patch.id.toString())
+            }
             return {
                 ...state,
                 saved: action.patch,
@@ -50,6 +54,13 @@ export function topReducer(state = initialState, action: any): State {
             return {
                 ...state,
                 patch: action.patch
+            };
+        case CREATE_NEW_PATCH:
+            return {
+                ...state,
+                saved: undefined,
+                name: "Untitled",
+                patch: emptyPatch()
             };
         case UPDATE_FADER:
             return {

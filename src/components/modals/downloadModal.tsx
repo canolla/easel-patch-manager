@@ -130,9 +130,10 @@ export const DownloadModalImpl = (props: DownloadModalProps) => {
         actions={actions}>
         {!sendingPatch &&
             <>
+                <MidiOutputSelector />
                 <div className="modal-field">
                     <div className="modal-field-label">
-                        Save to slot:
+                        Save slot:
                     </div>
                     <Dropdown
                         id="download-save-slot"
@@ -141,7 +142,6 @@ export const DownloadModalImpl = (props: DownloadModalProps) => {
                         selectedId={selectedSlot}
                     />
                 </div>
-                <MidiOutputSelector />
                 <div className="modal-field">
                     <div className="modal-field-label">
                         Message speed:

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { SavedPatch, savePatchAsync, updatePatchAsync } from "../../indexedDB";
-import { dispatchHideModal, dispatchOpenSavedPatch } from "../../store/dispatch";
+import { dispatchHideModal, dispatchOpenSavedPatch, dispatchCreateNewPatch } from "../../store/dispatch";
 import { State } from "../../store/reducer";
 import { Easel, SaveModalState } from "../../types";
 import { createPreviewURI, encodePatch } from "../../util";
@@ -9,6 +9,7 @@ import { Modal, ModalAction } from "./modal";
 
 export interface SaveModalProps {
     dispatchHideModal: () => void;
+    dispatchCreateNewPatch: () => void;
     dispatchOpenSavedPatch: (patch: SavedPatch) => void;
     patchToLoad: SavedPatch;
     saved?: SavedPatch;
@@ -17,14 +18,19 @@ export interface SaveModalProps {
 }
 
 export const SaveModalImpl = (props: SaveModalProps) => {
-    const { dispatchHideModal, dispatchOpenSavedPatch, patchToLoad, saved, patchName, patch } = props;
+    const { dispatchHideModal, dispatchOpenSavedPatch, dispatchCreateNewPatch, patchToLoad, saved, patchName, patch } = props;
 
     const actions: ModalAction[] = [
         {
             label: "Don't Save",
             onClick: () => {
                 dispatchHideModal();
-                dispatchOpenSavedPatch(patchToLoad);
+                if (patchToLoad) {
+                    dispatchOpenSavedPatch(patchToLoad);
+                }
+                else {
+                    dispatchCreateNewPatch();
+                }
             }
         },
         {
@@ -48,7 +54,12 @@ export const SaveModalImpl = (props: SaveModalProps) => {
                 }
 
                 
-                dispatchOpenSavedPatch(patchToLoad);
+                if (patchToLoad) {
+                    dispatchOpenSavedPatch(patchToLoad);
+                }
+                else {
+                    dispatchCreateNewPatch();
+                }
             }
         }
     ]
@@ -78,7 +89,8 @@ function mapStateToProps(state: State, ownProps: any) {
 
 const mapDispatchToProps = {
     dispatchHideModal,
-    dispatchOpenSavedPatch
+    dispatchOpenSavedPatch,
+    dispatchCreateNewPatch
 };
 
 export const SaveModal = connect(mapStateToProps, mapDispatchToProps)(SaveModalImpl);

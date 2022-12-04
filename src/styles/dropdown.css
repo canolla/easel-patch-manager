@@ -123,7 +123,7 @@ i.chevron-up::after {
     right: 0;
     width: 12rem;
     margin-top: 0.25rem;
-    max-height: 10rem;
+    max-height: 12rem;
     border: 2px solid var(--color-outline);
     overflow-y: auto;
 }
@@ -156,6 +156,11 @@ i.chevron-up::after {
     padding: 1rem;
 }
 
-/* .common-menu-dropdown-item.common-button:focus::after {
-    outline: @buttonFocusOutlineLightBackground;
-} */
+.common-menu-dropdown-item.common-button:focus::after {
+    outline: 1px solid var(--color-outline);
+}
+
+.common-dropdown-item.common-button:focus {
+    color: var(--color-background);
+    background-color: var(--color-outline);
+}
