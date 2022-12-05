@@ -28,32 +28,41 @@ const HANDLE_WIDTH = 12;
 export const FaderViewImpl = (props: FaderProps) => {
     const { color, left, top, label, value, module, fader, dispatchUpdateFader } = props;
 
-    const attachEvents = (g: SVGGElement) => {
-        if (!g) return;
-        if (window.PointerEvent) {
-            const pointerUpdate = (e: PointerEvent) => {
-                if (!e.buttons) return;
-                const rect = g.getBoundingClientRect();
+    let svgGRef: SVGGElement;
 
-                const eventPoint = toSVGCoordinate(g.ownerSVGElement!, e.clientX, e.clientY);
-                const rectPoint = toSVGCoordinate(g.ownerSVGElement!, rect.left, rect.top);
+    React.useEffect(() => {
+        const pointerUpdate = (e: PointerEvent) => {
+            if (!e.buttons) return;
+            const rect = svgGRef.getBoundingClientRect();
 
-                dispatchUpdateFader(module, fader, ((1 - ((eventPoint.y - rectPoint.y) / FADER_HEIGHT)) * MAX_VALUE) | 0);
-            }
+            const eventPoint = toSVGCoordinate(svgGRef.ownerSVGElement!, e.clientX, e.clientY);
+            const rectPoint = toSVGCoordinate(svgGRef.ownerSVGElement!, rect.left, rect.top);
 
-            let frameRef: number | undefined = undefined;;
-
-            const throttled = (e: PointerEvent) => {
-                if (frameRef) cancelAnimationFrame(frameRef);
-                frameRef = requestAnimationFrame(() => {
-                    frameRef = undefined;
-                    pointerUpdate(e);
-                })
-            }
-
-            g.addEventListener("pointerdown", throttled);
-            g.addEventListener("pointermove", throttled);
+            dispatchUpdateFader(module, fader, ((1 - ((eventPoint.y - rectPoint.y) / FADER_HEIGHT)) * MAX_VALUE) | 0);
         }
+
+        let frameRef: number | undefined = undefined;;
+
+        const throttled = (e: PointerEvent) => {
+            if (frameRef) cancelAnimationFrame(frameRef);
+            frameRef = requestAnimationFrame(() => {
+                frameRef = undefined;
+                pointerUpdate(e);
+            })
+        }
+
+        svgGRef.addEventListener("pointerdown", throttled);
+        svgGRef.addEventListener("pointermove", throttled);
+        return () => {
+            svgGRef.removeEventListener("pointerdown", throttled);
+            svgGRef.removeEventListener("pointermove", throttled);
+        }
+    })
+
+
+    const handleGRef = (g: SVGGElement) => {
+        if (!g) return;
+        svgGRef = g;
     }
 
     const onKeyDown = (e: React.KeyboardEvent) => {
@@ -85,7 +94,7 @@ export const FaderViewImpl = (props: FaderProps) => {
     return <g
         className="easel-fader"
         transform={`translate(${left}, ${top})`}
-        ref={attachEvents}
+        ref={handleGRef}
         onKeyDown={onKeyDown}
         tabIndex={0}
         role="slider"

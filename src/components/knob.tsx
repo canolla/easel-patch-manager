@@ -27,42 +27,49 @@ export const KnobImpl = (props: KnobProps) => {
     const minAngle = 135 * Math.PI / 180;
     const maxAngle = 405 * Math.PI / 180;
     const angle = minAngle + (value / MAX_VALUE) * (maxAngle - minAngle);
+    let svgGRef: SVGGElement;
 
-    const attachEvents = (g: SVGGElement) => {
-        if (!g) return;
-        if (window.PointerEvent) {
-            const pointerUpdate = (e: PointerEvent) => {
-                if (!e.buttons) return;
-                const rect = g.getBoundingClientRect();
+    React.useEffect(() => {
+        const pointerUpdate = (e: PointerEvent) => {
+            if (!e.buttons) return;
+            const rect = svgGRef.getBoundingClientRect();
 
-                const eventPoint = toSVGCoordinate(g.ownerSVGElement!, e.clientX, e.clientY);
-                const rectPoint = toSVGCoordinate(g.ownerSVGElement!, rect.left + rect.width / 2, rect.top + rect.height / 2)
-                let angle = Math.atan2(eventPoint.y - rectPoint.y, eventPoint.x - rectPoint.x);
-                if (angle < minAngle) {
-                    angle += Math.PI * 2
-                }
-                else if (angle > maxAngle) {
-                    angle -= Math.PI * 2
-                }
-
-                if (angle < minAngle || angle > maxAngle) return;
-
-                dispatchUpdateFader(module, fader, Math.min(MAX_VALUE, Math.max(0, (((angle - minAngle) / (maxAngle - minAngle)) * MAX_VALUE)) | 0));
+            const eventPoint = toSVGCoordinate(svgGRef.ownerSVGElement!, e.clientX, e.clientY);
+            const rectPoint = toSVGCoordinate(svgGRef.ownerSVGElement!, rect.left + rect.width / 2, rect.top + rect.height / 2)
+            let angle = Math.atan2(eventPoint.y - rectPoint.y, eventPoint.x - rectPoint.x);
+            if (angle < minAngle) {
+                angle += Math.PI * 2
+            }
+            else if (angle > maxAngle) {
+                angle -= Math.PI * 2
             }
 
-            let frameRef: number | undefined = undefined;;
+            if (angle < minAngle || angle > maxAngle) return;
 
-            const throttled = (e: PointerEvent) => {
-                if (frameRef) cancelAnimationFrame(frameRef);
-                frameRef = requestAnimationFrame(() => {
-                    frameRef = undefined;
-                    pointerUpdate(e);
-                })
-            }
-
-            g.addEventListener("pointerdown", throttled);
-            g.addEventListener("pointermove", throttled);
+            dispatchUpdateFader(module, fader, Math.min(MAX_VALUE, Math.max(0, (((angle - minAngle) / (maxAngle - minAngle)) * MAX_VALUE)) | 0));
         }
+
+        let frameRef: number | undefined = undefined;;
+
+        const throttled = (e: PointerEvent) => {
+            if (frameRef) cancelAnimationFrame(frameRef);
+            frameRef = requestAnimationFrame(() => {
+                frameRef = undefined;
+                pointerUpdate(e);
+            })
+        }
+
+        svgGRef.addEventListener("pointerdown", throttled);
+        svgGRef.addEventListener("pointermove", throttled);
+        return () => {
+            svgGRef.removeEventListener("pointerdown", throttled);
+            svgGRef.removeEventListener("pointermove", throttled);
+        }
+    })
+
+    const handleGRef = (g: SVGGElement) => {
+        if (!g) return;
+        svgGRef = g;
     }
 
     const onKeyDown = (e: React.KeyboardEvent) => {
@@ -93,7 +100,7 @@ export const KnobImpl = (props: KnobProps) => {
     return <g
         className="easel-knob"
         transform={`translate(${x}, ${y})`}
-        ref={attachEvents}
+        ref={handleGRef}
         tabIndex={0}
         role="slider"
         aria-valuemin={0}

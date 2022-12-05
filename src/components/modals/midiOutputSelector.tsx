@@ -21,6 +21,8 @@ const MidiOutputSelectorImpl = (props: MidiOutputSelectorProps) => {
             setMidiOutputs(outputs);
         }
 
+        updateMidiOutputsAsync();
+
         addConnectionChangedListener(updateMidiOutputsAsync);
         return () => {
             removeConnectionChangedListener(updateMidiOutputsAsync);

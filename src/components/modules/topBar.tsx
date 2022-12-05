@@ -54,7 +54,7 @@ export const TopBarImpl = (props: TopBarProps) => {
     return <Section left={0} top={0} width={1575} height={120}>
         <g ref={handleRef} />
         <Section left={0} top={0} width={840} height={120}>
-            <Section left={0} top={0} width={840} height={30} label="EASEL PROGRAM MANAGER" />
+            <Section left={0} top={0} width={840} height={30} label="UNOFFICIAL EASEL PROGRAM MANAGER" />
             <IconButton
                 left={15}
                 top={45}

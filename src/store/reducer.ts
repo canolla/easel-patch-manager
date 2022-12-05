@@ -32,7 +32,7 @@ const initialState: State = {
     patch: emptyPatch(),
     name: "Untitled",
     dragPoints: [],
-    midiSpeed: "medium",
+    midiSpeed: "fast",
 }
 
 export function topReducer(state = initialState, action: any): State {

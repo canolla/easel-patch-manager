@@ -24,6 +24,8 @@ export const MidiModalImpl = (props: MidiModalProps) => {
             setMidiInputs(inputs);
         }
 
+        updateMidiInputsAsync();
+
         addConnectionChangedListener(updateMidiInputsAsync);
         return () => {
             removeConnectionChangedListener(updateMidiInputsAsync);

@@ -6,7 +6,7 @@ const definitions = [
     {
         "name": "cv_connect",
         "length": 35,
-        "template": "F0 24 2F 63 76 5F 63 6F 6E 6E 65 63 74 00 2C 69 69 69 66 00 00 00 00 00 00 00 00 00 00 XX 00 00 00 XX 3F F7 80 00 00",
+        "template": "F0 24 2F 63 76 5F 63 6F 6E 6E 65 63 74 00 2C 69 69 69 66 00 00 00 00 00 00 00 00 00 00 XX 00 00 00 XX 3F 7F 00 00 F7",
         "arguments": [
             {
                 "offset": 29,
@@ -955,6 +955,10 @@ export function createSaveMessage(saveIndex: number) {
 }
 
 export function createSetNameMessage(name: string) {
+    // For some reason, the iprogram card has a minimum name length
+    while (name.length < 10) {
+        name = name + " ";
+    }
     const msg = getMessageByName("ps_setName");
     const prefix = getMessageBytes(msg!.template);
     const out = new Uint8Array(prefix.length + name.length + 3);
